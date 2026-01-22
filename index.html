@@ -2,79 +2,91 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Crie seu Catálogo Grátis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Criar Catálogo Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
-        .card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;}
-        button { width: 100%; padding: 15px; background: #dc2626; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        button:hover { background: #b91c1c; }
-        .url-preview { font-size: 0.8rem; color: #666; margin-bottom: 20px; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
+        
+        .container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); padding: 40px 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        
+        h1 { font-size: 2rem; margin-bottom: 10px; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p { color: #94a3b8; margin-bottom: 30px; line-height: 1.5; }
+        
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-left: 5px; display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box; }
+        input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2); }
+        
+        button { width: 100%; padding: 18px; background: #3b82f6; color: white; border: none; font-size: 1rem; font-weight: 800; border-radius: 12px; cursor: pointer; margin-top: 20px; transition: transform 0.2s, background 0.2s; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+        button:active { transform: scale(0.98); }
+        
+        .slug-preview { margin-top: 20px; font-size: 0.8rem; color: #64748b; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; word-break: break-all; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>Crie sua Loja Digital</h1>
-    <p>Comece a vender no WhatsApp em segundos.</p>
-    
-    <input type="text" id="nomeLoja" placeholder="Nome da sua Loja (ex: Pizzaria do Edu)">
-    <input type="text" id="zapLoja" placeholder="Seu WhatsApp (apenas números)">
-    
-    <div class="url-preview">Sua loja será: seudesign.com/catalogo.html?id=<b id="slugPreview">...</b></div>
+    <div class="container">
+        <h1>Crie sua Loja</h1>
+        <p>Tenha seu catálogo online e receba pedidos no WhatsApp em segundos.</p>
+        
+        <div class="input-group">
+            <label>Nome do Negócio</label>
+            <input type="text" id="nomeLoja" placeholder="Ex: Burguer King">
+        </div>
+        
+        <div class="input-group">
+            <label>WhatsApp (DDD + Número)</label>
+            <input type="tel" id="zapLoja" placeholder="Ex: 5511999999999">
+        </div>
 
-    <button onclick="criarLoja()">CRIAR CATÁLOGO GRÁTIS</button>
-</div>
+        <button onclick="criarLoja()">INICIAR GRÁTIS 🚀</button>
+        
+        <div class="slug-preview">
+            seusite.com/<b id="slugPreview">...</b>
+        </div>
+    </div>
 
-<script type="module">
-    import { db, ref, set, get } from './firebase-config.js';
+    <script type="module">
+        import { db, ref, set, get } from './firebase-config.js';
 
-    const inputNome = document.getElementById('nomeLoja');
-    
-    // Função para criar "Slug" (URL amigável: "Pizzaria do Edu" -> "pizzaria-do-edu")
-    function criarSlug(texto) {
-        return texto.toString().toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Remove acentos
-            .replace(/\s+/g, '-')           // Espaços viram hífens
-            .replace(/[^\w\-]+/g, '')       // Remove caracteres especiais
-            .replace(/\-\-+/g, '-');        // Remove hífens duplicados
-    }
-
-    inputNome.addEventListener('input', () => {
-        document.getElementById('slugPreview').innerText = criarSlug(inputNome.value);
-    });
-
-    window.criarLoja = async () => {
-        const nome = inputNome.value;
-        const zap = document.getElementById('zapLoja').value;
-        const slug = criarSlug(nome);
-
-        if(!nome || !zap) return alert("Preencha tudo!");
-
-        const lojaRef = ref(db, 'lojas/' + slug);
-
-        // Verifica se já existe
-        const snapshot = await get(lojaRef);
-        if(snapshot.exists()) {
-            alert("Já existe uma loja com esse nome. Tente outro.");
-            return;
+        const inputNome = document.getElementById('nomeLoja');
+        
+        function criarSlug(texto) {
+            return texto.toString().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, '-')
+                .replace(/[^\w\-]+/g, '')
+                .replace(/\-\-+/g, '-');
         }
 
-        // Cria a loja no banco
-        await set(lojaRef, {
-            config: {
-                nome: nome,
-                zap: zap,
-                endereco: "Endereço não configurado",
-                capa: ""
-            },
-            produtos: {} // Começa vazio
+        inputNome.addEventListener('input', () => {
+            document.getElementById('slugPreview').innerText = criarSlug(inputNome.value);
         });
 
-        alert("Loja criada com sucesso!");
-        // Redireciona para o Painel Admin (passando o ID)
-        window.location.href = `admin.html?id=${slug}`;
-    }
-</script>
+        window.criarLoja = async () => {
+            const nome = inputNome.value;
+            const zap = document.getElementById('zapLoja').value;
+            const slug = criarSlug(nome);
+
+            if(!nome || !zap) return alert("Preencha todos os campos!");
+
+            const lojaRef = ref(db, 'lojas/' + slug);
+            const snapshot = await get(lojaRef);
+
+            if(snapshot.exists()) {
+                alert("Este nome de loja já existe. Tente outro.");
+                return;
+            }
+
+            await set(lojaRef, {
+                config: { nome, zap, endereco: "", capa: "" },
+                produtos: {}
+            });
+
+            // Redireciona para o novo admin estilo APP
+            window.location.href = `admin.html?id=${slug}`;
+        }
+    </script>
 </body>
 </html>
