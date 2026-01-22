@@ -20,7 +20,6 @@
         .nome { font-weight: 700; height: 2.4em; overflow: hidden; color: #333; font-size: 0.9rem; }
         .preco { background: #facc15; color: black; font-family: 'Anton'; font-size: 1.5rem; padding: 5px; transform: rotate(-2deg); margin: 5px auto; display: inline-block; border: 1px dashed black; }
         .btn { background: #16a34a; color: white; text-decoration: none; padding: 10px; font-weight: bold; border-radius: 4px; margin-top: auto; display: block; }
-        .btn:hover { background: #15803d; }
         .zap-float { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 100; color: white; }
     </style>
 </head>
@@ -42,34 +41,39 @@
         <div id="conteudo" style="padding-bottom: 50px; flex: 1;">
             <p style="text-align:center; padding:50px; color:#666">Buscando ofertas...</p>
         </div>
-        
-        <div style="text-align: center; padding: 20px; font-size: 0.8rem; color: #999; border-top: 1px solid #eee;">
-            Catálogo atualizado em tempo real.
-        </div>
+        <div style="text-align: center; padding: 20px; font-size: 0.8rem; color: #999; border-top: 1px solid #eee;">Catálogo Digital</div>
     </div>
 
 <script type="module">
     import { db, ref, onValue } from './firebase-config.js';
 
-    // 1. CAPTURAR O ID DA URL
     const params = new URLSearchParams(window.location.search);
     const LOJA_ID = params.get('id');
 
-    if (!LOJA_ID) {
-        alert("Loja não encontrada!");
-        window.location.href = "index.html";
-    }
+    if (!LOJA_ID) { alert("Loja não encontrada!"); window.location.href = "index.html"; }
 
     let ZAP_LOJA = ""; 
     let NOME_LOJA = "";
 
-    // 2. BUSCAR DADOS DA LOJA ESPECÍFICA
     const configRef = ref(db, `lojas/${LOJA_ID}/config`);
     
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
         
         if(data) {
+            // TRAVA DE SEGURANÇA (PAGAMENTO/PENDENTE)
+            const validade = data.validade ? new Date(data.validade) : new Date();
+            const agora = new Date();
+            
+            if (data.status === "pendente" || agora > validade) {
+                document.body.innerHTML = `
+                    <div style="height:100vh; display:flex; justify-content:center; align-items:center; flex-direction:column; text-align:center; font-family:sans-serif; background:#eee;">
+                        <h1 style="color:#666">🏪 Loja Indisponível</h1>
+                        <p>O catálogo está em manutenção ou aguardando ativação.</p>
+                    </div>`;
+                return;
+            }
+
             NOME_LOJA = data.nome || "Loja";
             ZAP_LOJA = data.zap || "";
             document.getElementById('txtNome').innerText = NOME_LOJA;
@@ -78,21 +82,17 @@
             if(data.capa) document.getElementById('headerLoja').style.backgroundImage = `url('${data.capa}')`;
             carregarProdutos();
         } else {
-            document.querySelector('.folha').innerHTML = "<h1 style='text-align:center; padding:50px'>Loja não encontrada.</h1>";
+            document.querySelector('.folha').innerHTML = "<h1 style='text-align:center; padding:50px'>Loja não existe.</h1>";
         }
     });
 
-    // 3. CARREGAR PRODUTOS
     function carregarProdutos() {
         onValue(ref(db, `lojas/${LOJA_ID}/produtos`), (snapshot) => {
             const container = document.getElementById('conteudo');
             container.innerHTML = "";
             const dados = snapshot.val();
 
-            if (!dados) {
-                container.innerHTML = "<p style='text-align:center; padding:50px'>Nenhuma oferta no momento.</p>";
-                return;
-            }
+            if (!dados) { container.innerHTML = "<p style='text-align:center; padding:50px'>Nenhuma oferta no momento.</p>"; return; }
 
             const categorias = {};
             Object.values(dados).forEach(p => {
@@ -104,7 +104,6 @@
             for(const [cat, itens] of Object.entries(categorias)) {
                 container.innerHTML += `<div class="faixa">${cat}</div>`;
                 let html = `<div class="grid">`;
-                
                 itens.forEach(p => {
                     const preco = p.preco.toFixed(2).replace('.', ',');
                     const mensagem = `Olá *${NOME_LOJA}*! Vi o produto *${p.nome}* por R$ ${preco} no catálogo e tenho interesse.`;
@@ -116,8 +115,7 @@
                             <div class="nome">${p.nome}</div>
                             <div><span class="preco">R$ ${preco}</span></div>
                             <a href="${linkZap}" target="_blank" class="btn">COMPRAR 🛒</a>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 html += `</div>`;
                 container.innerHTML += html;
