@@ -7,6 +7,8 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    
     <style>
         :root { 
             --primary: #3b82f6; 
@@ -149,7 +151,7 @@
             </button>
         </div>
         <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">
-            Versão 3.2 - Cód Produto
+            Versão 3.4 - Full Turbo
         </div>
     </div>
 
@@ -189,10 +191,32 @@
     window.copiarLink = () => { navigator.clipboard.writeText(linkLoja); showToast("Link copiado!"); }
     window.sair = () => { if(confirm("Sair do painel?")) window.location.href = "index.html"; }
 
+    // ==========================================
+    // 🚀 LÓGICA DE COMPRESSÃO DE IMAGEM RESTAURADA 🚀
+    // ==========================================
+    async function comprimirImagem(file) {
+        const options = {
+            maxSizeMB: 0.2,          // Alvo: 200KB
+            maxWidthOrHeight: 800,   // Largura máxima
+            useWebWorker: true,
+            fileType: "image/jpeg"
+        }
+        try {
+            const compressedFile = await imageCompression(file, options);
+            return compressedFile;
+        } catch (error) {
+            console.log("Erro na compressão:", error);
+            return file; // Se falhar, usa original
+        }
+    }
+
     const IMGBB_KEY = "7a7575eb8903aface0123fece09257fa"; 
     async function uploadToImgBB(file) {
+        // ✅ CHAMA A COMPRESSÃO ANTES
+        const arquivoFinal = await comprimirImagem(file);
+        
         const formData = new FormData();
-        formData.append("image", file);
+        formData.append("image", arquivoFinal);
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: "POST", body: formData });
         const data = await res.json();
         return data.data.url;
@@ -243,7 +267,7 @@
                 const MEU_ZAP = "5597984431811";
                 const msgZap = encodeURIComponent(`Olá! Quero renovar minha loja (ID: ${LOJA_ID}). Já fiz o Pix!`);
                 document.body.innerHTML = `
-                    <div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background: linear-gradient(135deg, #0f172a 0%, #312e81 100%); color:white; font-family:'Inter', sans-serif; text-align:center; padding:20px;">
+                    <div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:white; font-family:'Inter', sans-serif; text-align:center; padding:20px;">
                         <div style="font-size:5rem;">🔒</div><h1>Plano Expirado</h1><p>Renove para continuar.</p>
                         <a href="https://wa.me/${MEU_ZAP}?text=${msgZap}" class="btn" style="background:#22c55e; color:white; padding:15px; border-radius:10px; text-decoration:none;">Falar no WhatsApp</a>
                     </div>`;
@@ -267,7 +291,10 @@
         
         try {
             let capaUrl = document.getElementById('previewCapa').src;
-            if(file) capaUrl = await uploadToImgBB(file);
+            if(file) {
+                btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Comprimindo...";
+                capaUrl = await uploadToImgBB(file);
+            }
             const snapshot = await get(configRef);
             const currentData = snapshot.val() || {};
 
@@ -297,9 +324,12 @@
         
         try {
             let imgUrl = "https://via.placeholder.com/150?text=Produto";
-            if(file) imgUrl = await uploadToImgBB(file);
+            if(file) {
+                btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Comprimindo...";
+                imgUrl = await uploadToImgBB(file);
+            }
             
-            // --- GERA O CÓDIGO DO PRODUTO (5 DÍGITOS) ---
+            // ✅ CÓDIGO DE 5 DÍGITOS ESTÁ AQUI
             const codProd = Math.floor(10000 + Math.random() * 90000);
 
             await set(push(produtosRef), { 
@@ -307,7 +337,7 @@
                 cat, 
                 preco: parseFloat(preco), 
                 img: imgUrl,
-                codigo: codProd // Salva o código
+                codigo: codProd
             });
             showToast("Produto adicionado!");
             document.getElementById('nomeProd').value = ""; document.getElementById('precoProd').value = ""; document.getElementById('fotoProd').value = "";
