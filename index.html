@@ -2,68 +2,230 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Criar Loja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .box { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; }
-        input, button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box;}
-        button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
-        .selected { border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.2); }
-        .plan-opt { background: #1e293b; padding: 15px; margin: 5px 0; border-radius: 5px; cursor: pointer; border: 1px solid #334155; }
+        body { 
+            margin: 0; font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); 
+            color: white; min-height: 100vh; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 20px; box-sizing: border-box;
+        }
+        
+        .container { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            padding: 30px; border-radius: 24px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            width: 100%; max-width: 400px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+            text-align: center;
+        }
+        
+        h1 { font-size: 2rem; margin: 0 0 10px 0; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.sub { color: #94a3b8; margin-bottom: 30px; font-size: 0.9rem; }
+        
+        /* INPUTS ESTILO VIDRO */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-left: 5px; display: block; margin-bottom: 5px; }
+        input { 
+            width: 100%; padding: 16px; border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(0,0,0,0.3); color: white; 
+            font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box; 
+        }
+        input:focus { border-color: #60a5fa; background: rgba(0,0,0,0.5); }
+        
+        /* CARDS DE PLANO */
+        .planos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .plano-card { 
+            background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.05); 
+            border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.2s; position: relative; 
+        }
+        .plano-card.selected { 
+            border-color: #3b82f6; background: rgba(59, 130, 246, 0.15); 
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); 
+        }
+        .plano-nome { font-size: 0.85rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
+        .plano-preco { font-size: 1.3rem; font-weight: 800; color: white; margin: 5px 0; }
+        .check-icon { position: absolute; top: -8px; right: -8px; background: #3b82f6; color: white; border-radius: 50%; padding: 2px; display: none; font-size: 1.2rem; }
+        .plano-card.selected .check-icon { display: block; }
+
+        /* BOTÃO */
+        button { 
+            width: 100%; padding: 18px; background: #3b82f6; color: white; border: none; 
+            font-size: 1rem; font-weight: 800; border-radius: 12px; cursor: pointer; 
+            transition: transform 0.2s; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
+        }
+        button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.7; cursor: wait; }
+
+        /* RELOGIN AUTOMÁTICO */
+        #autoLoginBox { display: none; margin-bottom: 20px; animation: fadeIn 0.5s; }
+        .btn-retornar { background: #10b981; margin-bottom: 10px; }
+        .link-sair { color: #f87171; font-size: 0.8rem; text-decoration: underline; cursor: pointer; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>Criar Loja</h1>
-        <input type="text" id="nome" placeholder="Nome da Loja">
-        <input type="tel" id="zap" placeholder="WhatsApp (só números)">
-        
-        <div class="plan-opt selected" onclick="sel('mensal', 59.90, this)">Mensal - R$ 59,90</div>
-        <div class="plan-opt" onclick="sel('anual', 249.90, this)">Anual - R$ 249,90</div>
-        
-        <button onclick="criar()">CRIAR AGORA</button>
-        <p style="font-size:0.8rem; cursor:pointer; color:#aaa" onclick="entrar()">Já tenho loja</p>
+
+    <div class="container">
+        <div id="autoLoginBox">
+            <p>👋 Bem-vindo de volta!</p>
+            <button onclick="irParaLojaSalva()" class="btn-retornar">
+                <i class='bx bx-store-alt'></i> ABRIR MINHA LOJA
+            </button>
+            <div class="link-sair" onclick="esquecerLoja()">Não sou eu / Criar nova</div>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+        </div>
+
+        <div id="formBox">
+            <h1>Crie sua Loja</h1>
+            <p class="sub">Venda pelo WhatsApp em segundos.</p>
+            
+            <div class="input-group">
+                <label>Nome do Negócio</label>
+                <input type="text" id="nomeLoja" placeholder="Ex: Hamburgueria Top">
+            </div>
+            
+            <div class="input-group">
+                <label>Seu WhatsApp</label>
+                <input type="tel" id="zapLoja" placeholder="DDD + Número">
+            </div>
+
+            <label style="margin-bottom: 10px;">Escolha seu Pacote:</label>
+            <div class="planos-grid">
+                <div class="plano-card selected" onclick="selectPlan('mensal', 59.90)" id="card-mensal">
+                    <i class='bx bx-check check-icon'></i>
+                    <div class="plano-nome">Mensal</div>
+                    <div class="plano-preco">R$ 59,90</div>
+                </div>
+
+                <div class="plano-card" onclick="selectPlan('anual', 249.90)" id="card-anual">
+                    <i class='bx bx-check check-icon'></i>
+                    <div class="plano-nome">Anual</div>
+                    <div class="plano-preco">R$ 249,90</div>
+                </div>
+            </div>
+
+            <button onclick="contratar()" id="btnCriar">
+                <i class='bx bxl-whatsapp' style="font-size: 1.4rem;"></i> CRIAR AGORA
+            </button>
+            
+            <div style="margin-top: 20px; font-size: 0.8rem; color: #64748b;">
+                Já tem conta? <a href="#" onclick="loginManual()" style="color:#60a5fa">Entrar</a>
+            </div>
+        </div>
     </div>
 
-<script type="module">
-    import { db, ref, set, get } from './firebase-config.js';
-    let plano = 'mensal'; let preco = 59.90;
+    <script type="module">
+        import { db, ref, set, get } from './firebase-config.js';
 
-    window.sel = (p, v, el) => {
-        plano = p; preco = v;
-        document.querySelectorAll('.plan-opt').forEach(e => e.classList.remove('selected'));
-        el.classList.add('selected');
-    }
-
-    window.entrar = () => {
-        const nome = prompt("Nome da loja:");
-        if(nome) window.location.href = `admin.html?id=${slugify(nome)}`;
-    }
-
-    function slugify(text) { return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, ''); }
-
-    window.criar = async () => {
-        const nome = document.getElementById('nome').value;
-        const zap = document.getElementById('zap').value;
-        if(!nome || !zap) return alert("Preencha tudo!");
-        
-        const slug = slugify(nome);
-        const lojaRef = ref(db, 'lojas/' + slug);
-        const snap = await get(lojaRef);
-        
-        const codigo = Math.floor(1000 + Math.random() * 9000);
-
-        if(!snap.exists()) {
-            await set(lojaRef, {
-                config: { nome, zap, status: 'pendente', codigo_secreto: codigo, plano_escolhido: plano, validade: new Date().toISOString() },
-                produtos: {}
-            });
+        // VERIFICA SE JÁ TEM LOJA SALVA NO CELULAR
+        const savedId = localStorage.getItem('minha_loja_id');
+        if (savedId) {
+            document.getElementById('autoLoginBox').style.display = 'block';
+            document.getElementById('formBox').style.display = 'none';
         }
-        
-        window.open(`https://wa.me/5597984431811?text=${encodeURIComponent(`Quero ativar: ${nome} (${plano}).`)}`);
-        setTimeout(() => window.location.href = `admin.html?id=${slug}`, 1000);
-    }
-</script>
+
+        window.irParaLojaSalva = () => {
+            window.location.href = `admin.html?id=${savedId}`;
+        }
+
+        window.esquecerLoja = () => {
+            if(confirm("Deseja desconectar da loja salva?")) {
+                localStorage.removeItem('minha_loja_id');
+                location.reload();
+            }
+        }
+
+        window.loginManual = () => {
+            const nome = prompt("Qual o nome da sua loja (ID)?");
+            if(nome) {
+                const slug = criarSlug(nome);
+                localStorage.setItem('minha_loja_id', slug);
+                window.location.href = `admin.html?id=${slug}`;
+            }
+        }
+
+        // LÓGICA DE CRIAÇÃO
+        let selectedPlan = 'mensal';
+        let selectedPrice = 59.90;
+
+        window.selectPlan = (plan, price) => {
+            selectedPlan = plan;
+            selectedPrice = price;
+            document.querySelectorAll('.plano-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`card-${plan}`).classList.add('selected');
+        }
+
+        function criarSlug(texto) {
+            return texto.toString().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                .replace(/\s+/g, '-')
+                .replace(/[^\w\-]+/g, '')
+                .replace(/\-\-+/g, '-');
+        }
+
+        window.contratar = async () => {
+            const btn = document.getElementById('btnCriar');
+            const nome = document.getElementById('nomeLoja').value;
+            const zap = document.getElementById('zapLoja').value;
+            
+            if(!nome || !zap) return alert("Preencha todos os campos!");
+            
+            btn.disabled = true;
+            btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Criando...";
+
+            try {
+                const slug = criarSlug(nome);
+                const lojaRef = ref(db, 'lojas/' + slug);
+                const snapshot = await get(lojaRef);
+
+                // Se não existir, cria. Se existir, avisa.
+                if(!snapshot.exists()) {
+                    const codigoAtivacao = Math.floor(1000 + Math.random() * 9000).toString();
+                    
+                    await set(lojaRef, {
+                        config: { 
+                            nome: nome, 
+                            zap: zap, 
+                            status: "pendente",
+                            codigo_secreto: codigoAtivacao,
+                            plano_escolhido: selectedPlan,
+                            validade: new Date().toISOString()
+                        },
+                        produtos: {}
+                    });
+                    
+                    // Salva no celular para não pedir login depois
+                    localStorage.setItem('minha_loja_id', slug);
+
+                    // Zap Admin
+                    const seuNumero = "5597984431811"; 
+                    const msg = `Olá! Quero ativar a loja *${nome}* no plano *${selectedPlan.toUpperCase()}*. Aguardo a chave.`;
+                    window.open(`https://wa.me/${seuNumero}?text=${encodeURIComponent(msg)}`, '_blank');
+                    
+                    // Redireciona
+                    setTimeout(() => {
+                        window.location.href = `admin.html?id=${slug}`;
+                    }, 1000);
+                } else {
+                    alert("Essa loja já existe! Se for sua, clique em 'Entrar'.");
+                    btn.disabled = false;
+                    btn.innerHTML = "Tentar Outro Nome";
+                }
+            } catch (e) {
+                alert("Erro: " + e.message);
+                btn.disabled = false;
+                btn.innerText = "CRIAR AGORA";
+            }
+        }
+    </script>
 </body>
 </html>
