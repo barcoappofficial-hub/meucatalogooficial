@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <meta property="og:title" content="📦 Acesse nosso Catálogo Digital">
+    <meta property="og:description" content="Clique para ver fotos, preços e fazer seu pedido online agora mesmo!">
+    <meta property="og:image" content="https://www.nyscreation.com/logo.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:type" content="website">
+
     <title>Catálogo</title>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -45,6 +55,10 @@
         if(d) {
             if(d.status === 'pendente' || new Date() > new Date(d.validade)) { document.body.innerHTML = "<h1 style='text-align:center;padding:50px'>Loja Indisponível</h1>"; return; }
             NOME = d.nome; ZAP = d.zap;
+            
+            // ATUALIZA TÍTULO DA ABA DINAMICAMENTE
+            document.title = NOME + " | Catálogo";
+            
             document.getElementById('txtNome').innerText = NOME;
             document.getElementById('txtEnd').innerText = d.endereco || "";
             if(d.capa) document.getElementById('headerLoja').style.backgroundImage = `url('${d.capa}')`;
