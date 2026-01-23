@@ -4,31 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Painel Gestor</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     
     <style>
-        :root { 
-            --primary: #3b82f6; 
-            --text: #f1f5f9; 
-            --text-muted: #94a3b8;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(0, 0, 0, 0.3);
-        }
-
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #0f172a 0%, #172554 100%); 
-            background-attachment: fixed;
-            margin: 0; padding: 0; padding-bottom: 90px; 
-            color: var(--text); -webkit-font-smoothing: antialiased; 
-            min-height: 100vh;
-        }
+        :root { --primary: #3b82f6; --text: #f1f5f9; --text-muted: #94a3b8; --glass-bg: rgba(255, 255, 255, 0.08); --glass-border: rgba(255, 255, 255, 0.1); --input-bg: rgba(0, 0, 0, 0.3); }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #172554 100%); background-attachment: fixed; margin: 0; padding: 0; padding-bottom: 90px; color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; }
         
-        /* VIDRO UI */
         .app-header { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 15px 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .app-header h3 { margin: 0; font-size: 1.1rem; color: var(--primary); }
         .loja-id { font-size: 0.8rem; color: var(--text-muted); font-weight: normal; }
@@ -65,6 +57,8 @@
 
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #22c55e; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 2000; display: flex; align-items: center; gap: 8px; font-weight: bold; }
         .toast.show { opacity: 1; visibility: visible; top: 30px; }
+        
+        #btnInstall { display: none; margin-bottom: 20px; background: #22c55e; color: white; }
     </style>
 </head>
 <body>
@@ -122,13 +116,10 @@
             <h2>Dados</h2>
             <label>Nome da Loja</label>
             <input type="text" id="confNome">
-            
             <label>WhatsApp (Somente números)</label>
             <input type="tel" id="confZap">
-            
             <label>Endereço / Slogan</label>
             <input type="text" id="confEnd">
-            
             <button id="btnSalvarConfig" class="btn btn-primary">Salvar Alterações</button>
         </div>
         
@@ -139,19 +130,16 @@
 
     <div id="tab-perfil" class="tab-content">
         <div class="card" style="text-align: center; padding: 40px 20px;">
+            <button id="btnInstall" class="btn">📲 Instalar Aplicativo</button>
             <i class='bx bx-store' style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
             <h2>Sua Loja está Online!</h2>
             <p style="color: var(--text-muted); margin-bottom: 20px;">Envie o link abaixo para seus clientes realizarem pedidos.</p>
-            
             <a href="#" id="linkLojaBtn" target="_blank" class="btn btn-outline" style="margin-bottom: 10px;">
                 <i class='bx bx-link-external'></i> Abrir Catálogo
             </a>
             <button onclick="copiarLink()" class="btn btn-primary">
                 <i class='bx bx-copy'></i> Copiar Link
             </button>
-        </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">
-            Versão 4.0 - Sem Cartão
         </div>
     </div>
 
@@ -163,6 +151,27 @@
 
 <script type="module">
     import { db, ref, push, set, onValue, remove, get } from './firebase-config.js';
+
+    // PWA REGISTRATION
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js');
+        });
+    }
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const btn = document.getElementById('btnInstall');
+        btn.style.display = 'block';
+        btn.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') btn.style.display = 'none';
+                deferredPrompt = null;
+            });
+        });
+    });
 
     window.mudarAba = (abaId, btn) => {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -183,131 +192,75 @@
     if (!LOJA_ID) window.location.href = "index.html";
 
     document.getElementById('displayId').innerText = LOJA_ID;
-
-    // --- LINK CORRIGIDO PARA DOMÍNIO PRÓPRIO ---
     const linkLoja = window.location.href.replace("admin.html", "catalogo.html");
     document.getElementById('linkLojaBtn').href = linkLoja;
 
     window.copiarLink = () => { navigator.clipboard.writeText(linkLoja); showToast("Link copiado!"); }
     window.sair = () => { if(confirm("Sair do painel?")) window.location.href = "index.html"; }
 
-    // ==========================================
-    // 🚀 PROCESSADOR DE IMAGEM 100% GRÁTIS (BASE64) 🚀
-    // ==========================================
+    // PROCESSADOR DE IMAGEM (BASE64)
     async function processarImagem(file) {
-        const options = {
-            maxSizeMB: 0.15,         // Alvo: 150kb (Leve para o banco)
-            maxWidthOrHeight: 700,   // Largura boa para celular
-            useWebWorker: true,
-            fileType: "image/jpeg"
-        }
-        
+        const options = { maxSizeMB: 0.15, maxWidthOrHeight: 700, useWebWorker: true, fileType: "image/jpeg" };
         try {
-            // 1. Comprimir
             const compressedFile = await imageCompression(file, options);
-            
-            // 2. Converter para Texto (Base64)
             return await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(compressedFile);
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = error => reject(error);
             });
-        } catch (error) {
-            console.log("Erro ao processar:", error);
-            alert("Erro na imagem. Tente uma menor.");
-            return null;
-        }
+        } catch (error) { return null; }
     }
 
-    // --- CARREGAR CONFIG ---
+    // CARREGAR CONFIG
     const configRef = ref(db, `lojas/${LOJA_ID}/config`);
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
         if(data) {
-            
             if (data.status === "pendente") {
                 const MEU_PIX = "calisthenysoficial@gmail.com";
                 document.body.innerHTML = `
                     <div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:white; font-family:'Inter', sans-serif; text-align:center; padding:20px;">
-                        <div style="font-size:4rem; margin-bottom:10px">🔑</div>
                         <h1 style="margin-bottom:5px">Ativar Loja</h1>
-                        <p style="color:#94a3b8; max-width:350px; margin-bottom:30px; font-size:0.9rem;">
-                            Sua loja <strong>${data.nome}</strong> foi criada!<br>
-                            Pagamento do plano <strong>${data.plano_escolhido?.toUpperCase()}</strong> pendente.
-                        </p>
-                        <div style="background: rgba(255,255,255,0.05); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); width:100%; max-width:320px;">
-                            <label style="display:block; text-align:left; font-size:0.8rem; color:#94a3b8; margin-bottom:5px;">Código de Ativação (4 dígitos)</label>
-                            <input type="number" id="inputCodigo" placeholder="0000" style="padding:15px; border-radius:10px; border:1px solid #475569; background:#0f172a; color:white; text-align:center; font-size:1.2rem; letter-spacing:5px; width:100%;">
-                            <button onclick="ativarLoja()" style="width:100%; margin-top:15px; padding:15px; background:#3b82f6; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">LIBERAR ACESSO 🚀</button>
-                        </div>
-                        <div style="margin-top:30px; font-size:0.8rem; color:#64748b;">Pix: <span style="color:#cbd5e1">${MEU_PIX}</span></div>
+                        <p style="color:#94a3b8;">Pagamento pendente.</p>
+                        <input type="number" id="inputCodigo" placeholder="0000" style="padding:15px; border-radius:10px; width:100%; text-align:center; margin-bottom:10px;">
+                        <button onclick="ativarLoja()" class="btn btn-primary">ATIVAR</button>
+                        <div style="margin-top:20px; font-size:0.8rem;">Pix: ${MEU_PIX}</div>
                     </div>`;
-
                 window.ativarLoja = async () => {
-                    const code = document.getElementById('inputCodigo').value;
-                    if(code == data.codigo_secreto) {
+                    if(document.getElementById('inputCodigo').value == data.codigo_secreto) {
                         const hoje = new Date();
-                        const dias = (data.plano_escolhido === 'anual') ? 365 : 30;
-                        hoje.setDate(hoje.getDate() + dias);
-                        
+                        hoje.setDate(hoje.getDate() + (data.plano_escolhido === 'anual' ? 365 : 30));
                         await set(configRef, { ...data, status: "ativo", validade: hoje.toISOString() });
-                        alert("✅ Loja Ativada!"); window.location.reload();
+                        alert("✅ Ativado!"); window.location.reload();
                     } else { alert("❌ Código inválido!"); }
                 }
                 return;
             }
-
-            const validade = data.validade ? new Date(data.validade) : new Date();
-            if(new Date() > validade) {
-                const MEU_ZAP = "5597984431811";
-                const msgZap = encodeURIComponent(`Olá! Quero renovar minha loja (ID: ${LOJA_ID}). Já fiz o Pix!`);
-                document.body.innerHTML = `
-                    <div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background: linear-gradient(135deg, #0f172a 0%, #312e81 100%); color:white; font-family:'Inter', sans-serif; text-align:center; padding:20px;">
-                        <div style="font-size:5rem;">🔒</div><h1>Plano Expirado</h1><p>Renove para continuar.</p>
-                        <a href="https://wa.me/${MEU_ZAP}?text=${msgZap}" class="btn" style="background:#22c55e; color:white; padding:15px; border-radius:10px; text-decoration:none;">Falar no WhatsApp</a>
-                    </div>`;
-                return;
+            if(new Date() > (data.validade ? new Date(data.validade) : new Date())) {
+                document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>VENCIDO</h1>"; return;
             }
-
             document.getElementById('confNome').value = data.nome || "";
             document.getElementById('confEnd').value = data.endereco || "";
             document.getElementById('confZap').value = data.zap || "";
-            document.getElementById('txtValidade').innerText = validade.toLocaleDateString('pt-BR');
+            document.getElementById('txtValidade').innerText = new Date(data.validade).toLocaleDateString('pt-BR');
             if(data.capa) document.getElementById('previewCapa').src = data.capa;
         }
     });
 
-    // SALVAR CONFIG (USANDO BASE64)
     document.getElementById('btnSalvarConfig').addEventListener('click', async () => {
         const btn = document.getElementById('btnSalvarConfig');
         const file = document.getElementById('inputCapa').files[0];
-        btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Salvando...";
-        
+        btn.innerHTML = "⏳ Salvando...";
         try {
             let capaUrl = document.getElementById('previewCapa').src;
-            if(file) {
-                btn.innerHTML = "<i class='bx bx-image bx-spin'></i> Processando...";
-                // Converte para texto
-                const result = await processarImagem(file);
-                if(result) capaUrl = result;
-            }
-            const snapshot = await get(configRef);
-            const currentData = snapshot.val() || {};
-
-            await set(configRef, {
-                ...currentData,
-                nome: document.getElementById('confNome').value,
-                endereco: document.getElementById('confEnd').value,
-                zap: document.getElementById('confZap').value,
-                capa: capaUrl
-            });
-            showToast("Dados atualizados!");
-        } catch(e) { alert(e); } 
-        finally { btn.innerText = "Salvar Alterações"; }
+            if(file) { btn.innerHTML = "⏳ Processando..."; const r = await processarImagem(file); if(r) capaUrl = r; }
+            const snap = await get(configRef);
+            await set(configRef, { ...snap.val(), nome: document.getElementById('confNome').value, endereco: document.getElementById('confEnd').value, zap: document.getElementById('confZap').value, capa: capaUrl });
+            showToast("Salvo!");
+        } catch(e) { alert(e); } finally { btn.innerText = "Salvar Alterações"; }
     });
 
-    // PRODUTOS (USANDO BASE64 + CÓDIGO 5 DÍGITOS)
     const produtosRef = ref(db, `lojas/${LOJA_ID}/produtos`);
     document.getElementById('btnSalvarProd').addEventListener('click', async () => {
         const btn = document.getElementById('btnSalvarProd');
@@ -315,29 +268,13 @@
         const preco = document.getElementById('precoProd').value;
         const cat = document.getElementById('catProd').value;
         const file = document.getElementById('fotoProd').files[0];
-
         if(!nome || !preco) return showToast("Preencha nome e preço!");
-        btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i>";
-        
+        btn.innerHTML = "⏳";
         try {
-            let imgUrl = "https://via.placeholder.com/150?text=Produto";
-            if(file) {
-                btn.innerHTML = "<i class='bx bx-image bx-spin'></i> Processando...";
-                // Converte para texto
-                const result = await processarImagem(file);
-                if(result) imgUrl = result;
-            }
-            
-            const codProd = Math.floor(10000 + Math.random() * 90000);
-
-            await set(push(produtosRef), { 
-                nome, 
-                cat, 
-                preco: parseFloat(preco), 
-                img: imgUrl,
-                codigo: codProd
-            });
-            showToast("Produto adicionado!");
+            let imgUrl = "https://via.placeholder.com/150";
+            if(file) { btn.innerHTML = "⏳ Foto..."; const r = await processarImagem(file); if(r) imgUrl = r; }
+            await set(push(produtosRef), { nome, cat, preco: parseFloat(preco), img: imgUrl, codigo: Math.floor(10000 + Math.random() * 90000) });
+            showToast("Adicionado!");
             document.getElementById('nomeProd').value = ""; document.getElementById('precoProd').value = ""; document.getElementById('fotoProd').value = "";
         } catch(e) { alert(e); } finally { btn.innerText = "Adicionar Produto"; }
     });
@@ -349,21 +286,11 @@
         if(data) {
             Object.keys(data).reverse().forEach(key => { 
                 const p = data[key];
-                const codVisual = p.codigo || "---";
-                div.innerHTML += `
-                    <div class="product-item">
-                        <img src="${p.img}">
-                        <div class="info">
-                            <strong>${p.nome} <span class="cod-badge">#${codVisual}</span></strong>
-                            <span>R$ ${p.preco} • ${p.cat}</span>
-                        </div>
-                        <button class="btn-del" onclick="deletar('${key}')"><i class='bx bx-trash'></i></button>
-                    </div>`;
+                div.innerHTML += `<div class="product-item"><img src="${p.img}"><div class="info"><strong>${p.nome} #${p.codigo||'--'}</strong><span>R$ ${p.preco}</span></div><button class="btn-del" onclick="deletar('${key}')">🗑️</button></div>`;
             });
-        } else { div.innerHTML = "<div style='text-align:center; padding:30px; color:rgba(255,255,255,0.3)'>Nenhum produto ainda.</div>"; }
+        }
     });
-
-    window.deletar = async (id) => { if(confirm("Apagar produto?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
+    window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
     document.getElementById('inputCapa').addEventListener('change', function(e) { if(e.target.files[0]) document.getElementById('previewCapa').src = URL.createObjectURL(e.target.files[0]); });
 </script>
 </body>
