@@ -2,148 +2,68 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Criar Loja Virtual</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Loja</title>
     <style>
-        body { margin: 0; font-family: 'Inter', sans-serif; background: #0f172a; color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        
-        .container { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        
-        h1 { font-size: 1.8rem; margin: 0 0 10px 0; text-align: center; background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p.sub { color: #94a3b8; text-align: center; margin-bottom: 30px; font-size: 0.9rem; }
-        
-        .input-group { margin-bottom: 15px; }
-        label { font-size: 0.8rem; font-weight: 600; color: #cbd5e1; margin-left: 5px; display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; font-size: 1rem; outline: none; transition: 0.3s; box-sizing: border-box; }
-        input:focus { border-color: #60a5fa; box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2); }
-        
-        /* CARDS DE PREÇO */
-        .planos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .plano-card { background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
-        .plano-card:hover { border-color: #475569; }
-        .plano-card.selected { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-        
-        .plano-nome { font-size: 0.9rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
-        .plano-preco { font-size: 1.4rem; font-weight: 800; color: white; margin: 5px 0; }
-        .plano-periodo { font-size: 0.75rem; color: #64748b; }
-        .check-icon { position: absolute; top: -10px; right: -10px; background: #3b82f6; color: white; border-radius: 50%; padding: 4px; display: none; }
-        .plano-card.selected .check-icon { display: block; }
-
-        button { width: 100%; padding: 18px; background: #25D366; color: white; border: none; font-size: 1rem; font-weight: 800; border-radius: 12px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2); display: flex; align-items: center; justify-content: center; gap: 10px; }
-        button:active { transform: scale(0.98); }
-        
-        .footer-link { margin-top: 20px; text-align: center; font-size: 0.85rem; }
-        .footer-link a { color: #60a5fa; text-decoration: none; }
+        body { font-family: sans-serif; background: #0f172a; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+        .box { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; max-width: 400px; width: 90%; }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 5px; border: none; box-sizing: border-box;}
+        button { background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
+        .selected { border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.2); }
+        .plan-opt { background: #1e293b; padding: 15px; margin: 5px 0; border-radius: 5px; cursor: pointer; border: 1px solid #334155; }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>Crie sua Loja</h1>
-        <p class="sub">Venda pelo WhatsApp em segundos.</p>
+    <div class="box">
+        <h1>Criar Loja</h1>
+        <input type="text" id="nome" placeholder="Nome da Loja">
+        <input type="tel" id="zap" placeholder="WhatsApp (só números)">
         
-        <div class="input-group">
-            <label>Nome do Negócio</label>
-            <input type="text" id="nomeLoja" placeholder="Ex: Hamburgueria Top">
-        </div>
+        <div class="plan-opt selected" onclick="sel('mensal', 59.90, this)">Mensal - R$ 59,90</div>
+        <div class="plan-opt" onclick="sel('anual', 249.90, this)">Anual - R$ 249,90</div>
         
-        <div class="input-group">
-            <label>Seu WhatsApp</label>
-            <input type="tel" id="zapLoja" placeholder="DDD + Número">
-        </div>
-
-        <label style="margin-bottom: 10px;">Escolha seu Pacote:</label>
-        <div class="planos-grid">
-            <div class="plano-card selected" onclick="selectPlan('mensal', 59.90)" id="card-mensal">
-                <i class='bx bx-check check-icon'></i>
-                <div class="plano-nome">Mensal</div>
-                <div class="plano-preco">R$ 59,90</div>
-                <div class="plano-periodo">cobrado todo mês</div>
-            </div>
-
-            <div class="plano-card" onclick="selectPlan('anual', 249.90)" id="card-anual">
-                <i class='bx bx-check check-icon'></i>
-                <div class="plano-nome">Anual</div>
-                <div class="plano-preco">R$ 249,90</div>
-                <div class="plano-periodo">economize 65%</div>
-            </div>
-        </div>
-
-        <button onclick="contratar()">
-            <i class='bx bxl-whatsapp' style="font-size: 1.4rem;"></i> CONTRATAR AGORA
-        </button>
-        
-        <div class="footer-link">
-            Já tem uma loja? <a href="#" onclick="irParaLogin()">Entrar no Painel</a>
-        </div>
+        <button onclick="criar()">CRIAR AGORA</button>
+        <p style="font-size:0.8rem; cursor:pointer; color:#aaa" onclick="entrar()">Já tenho loja</p>
     </div>
 
-    <script type="module">
-        import { db, ref, set, get } from './firebase-config.js';
+<script type="module">
+    import { db, ref, set, get } from './firebase-config.js';
+    let plano = 'mensal'; let preco = 59.90;
 
-        let selectedPlan = 'mensal';
-        let selectedPrice = 59.90;
+    window.sel = (p, v, el) => {
+        plano = p; preco = v;
+        document.querySelectorAll('.plan-opt').forEach(e => e.classList.remove('selected'));
+        el.classList.add('selected');
+    }
 
-        window.selectPlan = (plan, price) => {
-            selectedPlan = plan;
-            selectedPrice = price;
-            document.querySelectorAll('.plano-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`card-${plan}`).classList.add('selected');
+    window.entrar = () => {
+        const nome = prompt("Nome da loja:");
+        if(nome) window.location.href = `admin.html?id=${slugify(nome)}`;
+    }
+
+    function slugify(text) { return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, ''); }
+
+    window.criar = async () => {
+        const nome = document.getElementById('nome').value;
+        const zap = document.getElementById('zap').value;
+        if(!nome || !zap) return alert("Preencha tudo!");
+        
+        const slug = slugify(nome);
+        const lojaRef = ref(db, 'lojas/' + slug);
+        const snap = await get(lojaRef);
+        
+        const codigo = Math.floor(1000 + Math.random() * 9000);
+
+        if(!snap.exists()) {
+            await set(lojaRef, {
+                config: { nome, zap, status: 'pendente', codigo_secreto: codigo, plano_escolhido: plano, validade: new Date().toISOString() },
+                produtos: {}
+            });
         }
-
-        function criarSlug(texto) {
-            return texto.toString().toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
-                .replace(/\s+/g, '-')
-                .replace(/[^\w\-]+/g, '')
-                .replace(/\-\-+/g, '-');
-        }
-
-        window.irParaLogin = () => {
-             const nome = document.getElementById('nomeLoja').value;
-             if(nome) window.location.href = `admin.html?id=${criarSlug(nome)}`;
-             else alert("Digite o nome da sua loja para entrar.");
-        }
-
-        window.contratar = async () => {
-            const nome = document.getElementById('nomeLoja').value;
-            const zap = document.getElementById('zapLoja').value;
-            const slug = criarSlug(nome);
-
-            if(!nome || !zap) return alert("Preencha o nome e o WhatsApp!");
-
-            const lojaRef = ref(db, 'lojas/' + slug);
-            const snapshot = await get(lojaRef);
-
-            // GERA O CÓDIGO SECRETO (4 Dígitos)
-            const codigoAtivacao = Math.floor(1000 + Math.random() * 9000).toString();
-
-            if(!snapshot.exists()) {
-                await set(lojaRef, {
-                    config: { 
-                        nome: nome, 
-                        zap: zap, 
-                        status: "pendente", // STATUS BLOQUEADO
-                        codigo_secreto: codigoAtivacao, // CÓDIGO GERADO
-                        plano_escolhido: selectedPlan,
-                        validade: new Date().toISOString() // Data vencida
-                    },
-                    produtos: {}
-                });
-            }
-
-            // REDIRECIONA PARA SEU WHATSAPP
-            const seuNumero = "5597984431811"; 
-            const msg = `Olá! Quero ativar a loja *${nome}* no plano *${selectedPlan.toUpperCase()}* (R$ ${selectedPrice.toFixed(2)}). Aguardo a chave de acesso.`;
-            
-            window.open(`https://wa.me/${seuNumero}?text=${encodeURIComponent(msg)}`, '_blank');
-            
-            setTimeout(() => {
-                window.location.href = `admin.html?id=${slug}`;
-            }, 1000);
-        }
-    </script>
+        
+        window.open(`https://wa.me/5597984431811?text=${encodeURIComponent(`Quero ativar: ${nome} (${plano}).`)}`);
+        setTimeout(() => window.location.href = `admin.html?id=${slug}`, 1000);
+    }
+</script>
 </body>
 </html>
