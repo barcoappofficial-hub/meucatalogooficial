@@ -13,5 +13,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Exportando apenas o banco de dados (Sem Storage)
 export { db, ref, push, set, onValue, remove, get, update, child };
