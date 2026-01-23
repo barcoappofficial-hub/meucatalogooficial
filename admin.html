@@ -127,16 +127,12 @@
     const params = new URLSearchParams(window.location.search);
     let LOJA_ID = params.get('id');
 
-    // Se não tiver ID na URL, tenta pegar da memória do celular
     if (!LOJA_ID) {
         const savedId = localStorage.getItem('minha_loja_id');
         if (savedId) {
-            // Se achou salvo, redireciona para a loja certa
             window.location.href = `admin.html?id=${savedId}`;
-            // Para a execução aqui para não carregar a tela vazia
             throw new Error("Redirecionando para login salvo..."); 
         } else {
-            // Se não tem nada, manda criar conta
             window.location.href = "index.html";
         }
     }
@@ -166,9 +162,18 @@
 
     const linkLoja = window.location.href.replace("admin.html", "catalogo.html");
     document.getElementById('linkLojaBtn').href = linkLoja;
-    window.copiarLink = () => { navigator.clipboard.writeText(linkLoja); showToast("Link copiado!"); }
     
-    // Função de Sair: Limpa a memória do celular
+    // === NOVA FUNÇÃO DE COPIAR COM MENSAGEM ===
+    window.copiarLink = () => { 
+        const nomeLoja = document.getElementById('confNome').value || "Loja";
+        
+        // Mensagem bonita e atrativa
+        const msg = `📦 *${nomeLoja}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados. Faça seu pedido online!\n\n👇👇👇\n${linkLoja}`;
+        
+        navigator.clipboard.writeText(msg); 
+        showToast("Texto e Link copiados!"); 
+    }
+    
     window.sair = () => { 
         if(confirm("Deseja sair e desconectar desta loja?")) {
             localStorage.removeItem('minha_loja_id');
@@ -196,14 +201,13 @@
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
         
-        // 🔒 TRAVA DE SEGURANÇA: Se não tem dados, a loja não existe!
+        // 🔒 TRAVA DE SEGURANÇA
         if (!data) {
             alert("⚠️ Acesso Negado: Esta loja não existe.\nVocê será redirecionado para criar uma nova.");
-            localStorage.removeItem('minha_loja_id'); // Limpa login inválido
+            localStorage.removeItem('minha_loja_id');
             window.location.href = "index.html";
             return;
         } else {
-            // Sucesso! A loja existe, salva no celular para a próxima vez
             localStorage.setItem('minha_loja_id', LOJA_ID);
         }
 
@@ -272,7 +276,7 @@
         div.innerHTML = "";
         const data = snapshot.val();
         if(data) {
-            Object.keys(data).reverse().forEach(key => { 
+            Object.keys(data).reverse().forEach(key => { 
                 const p = data[key];
                 div.innerHTML += `<div class="product-item"><img src="${p.img}"><div class="info"><strong>${p.nome} #${p.codigo||'--'}</strong><span>R$ ${p.preco}</span></div><button class="btn-del" onclick="deletar('${key}')">🗑️</button></div>`;
             });
