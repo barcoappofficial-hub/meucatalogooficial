@@ -18,12 +18,36 @@
     <style>
         body { background: #1a1a1a; font-family: 'Roboto', sans-serif; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
         .folha { background: white; width: 100%; max-width: 600px; min-height: 100vh; display: flex; flex-direction: column; }
-        header { background-color: #dc2626; background-size: cover; padding: 40px 20px; text-align: center; border-bottom: 8px solid #facc15; color:white; }
+        
+        /* Ajuste no Header e Endereço */
+        header { background-color: #dc2626; background-size: cover; background-position: center; padding: 40px 20px; text-align: center; border-bottom: 8px solid #facc15; color:white; }
         h1 { font-family: 'Anton'; font-size: 2.8rem; margin: 0; text-transform: uppercase; text-shadow: 2px 2px 5px black; }
+        
+        /* NOVA REGRA: Endereço com fundo preto 50% */
+        #txtEnd { 
+            background-color: rgba(0, 0, 0, 0.5); 
+            display: inline-block; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            margin-top: 10px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(2px); /* Efeito de vidro opcional */
+        }
+
         .faixa { background: black; color: #facc15; font-family: 'Anton'; text-align: center; font-size: 1.5rem; padding: 8px; margin: 20px auto; width: 90%; transform: skewX(-10deg); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 10px; }
-        .card { border: 1px solid #ddd; padding: 10px; text-align: center; display: flex; flex-direction: column; }
-        .card img { width: 100%; height: 140px; object-fit: contain; margin-bottom: 10px; cursor: zoom-in; }
+        .card { border: 1px solid #ddd; padding: 10px; text-align: center; display: flex; flex-direction: column; background: white; border-radius: 8px; }
+        
+        /* NOVA REGRA: Imagem preenchendo espaço */
+        .card img { 
+            width: 100%; 
+            height: 160px; /* Aumentei um pouco */
+            object-fit: cover; /* Isso faz preencher tudo */
+            margin-bottom: 10px; 
+            cursor: zoom-in; 
+            border-radius: 4px;
+        }
+        
         .preco { background: #facc15; color: black; font-family: 'Anton'; font-size: 1.5rem; padding: 5px; transform: rotate(-2deg); margin: 5px auto; display: inline-block; }
         .btn { background: #16a34a; color: white; text-decoration: none; padding: 10px; font-weight: bold; border-radius: 4px; display: block; }
         
@@ -41,6 +65,7 @@
         <header id="headerLoja"><h1 id="txtNome">...</h1><div id="txtEnd">...</div></header>
         <div id="conteudo" style="padding-bottom: 50px;"></div>
     </div>
+
 <script type="module">
     import { db, ref, onValue } from './firebase-config.js';
     const params = new URLSearchParams(window.location.search);
@@ -80,7 +105,17 @@
                 let html = `<div class="grid">`;
                 v.forEach(p => {
                     const link = ZAP ? `https://wa.me/${ZAP}?text=${encodeURIComponent(`Olá ${NOME}! Quero: ${p.nome} (Cód: ${p.codigo})`)}` : "#";
-                    html += `<div class="card"><img src="${p.img}" onclick="verImagem('${p.img}')"><strong>${p.nome}</strong><small>Cód: ${p.codigo}</small><div class="preco">R$ ${p.preco}</div><a href="${link}" target="_blank" class="btn">COMPRAR</a></div>`;
+                    
+                    // LÓGICA DE FORMATAÇÃO DE PREÇO (R$ 10,00)
+                    const precoFormatado = parseFloat(p.preco).toFixed(2).replace('.', ',');
+
+                    html += `<div class="card">
+                                <img src="${p.img}" onclick="verImagem('${p.img}')">
+                                <strong>${p.nome}</strong>
+                                <small>Cód: ${p.codigo}</small>
+                                <div class="preco">R$ ${precoFormatado}</div>
+                                <a href="${link}" target="_blank" class="btn">COMPRAR</a>
+                             </div>`;
                 });
                 c.innerHTML += html + `</div>`;
             }
