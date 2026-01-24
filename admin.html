@@ -18,7 +18,7 @@
     <style>
         :root { --primary: #3b82f6; --text: #f1f5f9; --text-muted: #94a3b8; --glass-bg: rgba(255, 255, 255, 0.08); --glass-border: rgba(255, 255, 255, 0.1); --input-bg: rgba(0, 0, 0, 0.3); }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; } /* Garante proporções exatas */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; } 
         
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #172554 100%); background-attachment: fixed; margin: 0; padding: 0; padding-bottom: 90px; color: var(--text); -webkit-font-smoothing: antialiased; min-height: 100vh; }
         
@@ -38,10 +38,9 @@
         input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
         label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
         
-        /* --- ESTILO DOS BOTÕES REFORMULADO --- */
         .btn { 
             width: 100%; 
-            padding: 14px; /* Altura equilibrada */
+            padding: 14px; 
             border-radius: 12px; 
             font-weight: 600; 
             cursor: pointer; 
@@ -51,23 +50,14 @@
             gap: 8px; 
             font-size: 0.95rem; 
             transition: all 0.2s ease; 
-            text-decoration: none; /* Remove sublinhado de links */
-            border: 2px solid transparent; /* Reserva espaço para a borda não quebrar layout */
+            text-decoration: none; 
+            border: 2px solid transparent; 
         }
         
-        .btn:active { transform: scale(0.98); opacity: 0.9; } /* Efeito de clique */
+        .btn:active { transform: scale(0.98); opacity: 0.9; } 
         
-        .btn-primary { 
-            background: var(--primary); 
-            color: white; 
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); /* Sombra suave */
-        }
-        
-        .btn-outline { 
-            border: 2px solid var(--primary); 
-            background: transparent; 
-            color: var(--primary); 
-        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+        .btn-outline { border: 2px solid var(--primary); background: transparent; color: var(--primary); }
         
         .btn-del { color: #f87171; background: rgba(239, 68, 68, 0.1); border: none; padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .btn-del:active { background: rgba(239, 68, 68, 0.2); }
@@ -166,7 +156,8 @@
     </nav>
 
 <script type="module">
-    import { db, ref, push, set, onValue, remove, get } from './firebase-config.js';
+    // --- ATENÇÃO: IMPORTS ATUALIZADOS PARA INCLUIR STORAGE ---
+    import { db, ref, push, set, onValue, remove, get, storage, sRef, uploadBytes, getDownloadURL } from './firebase-config.js';
 
     // ===============================================
     // 🔒 1. AUTO-LOGIN E VERIFICAÇÃO INICIAL
@@ -178,7 +169,7 @@
         const savedId = localStorage.getItem('minha_loja_id');
         if (savedId) {
             window.location.href = `admin.html?id=${savedId}`;
-            throw new Error("Redirecionando para login salvo..."); 
+            throw new Error("Redirecionando..."); 
         } else {
             window.location.href = "index.html";
         }
@@ -210,13 +201,9 @@
     const linkLoja = window.location.href.replace("admin.html", "catalogo.html");
     document.getElementById('linkLojaBtn').href = linkLoja;
     
-    // === NOVA FUNÇÃO DE COPIAR COM MENSAGEM ===
     window.copiarLink = () => { 
         const nomeLoja = document.getElementById('confNome').value || "Loja";
-        
-        // Mensagem bonita e atrativa
         const msg = `📦 *${nomeLoja}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados. Faça seu pedido online!\n\n👇👇👇\n${linkLoja}`;
-        
         navigator.clipboard.writeText(msg); 
         showToast("Texto e Link copiados!"); 
     }
@@ -228,16 +215,39 @@
         }
     }
 
-    // === PROCESSAMENTO DE IMAGEM ===
-    async function processarImagem(file) {
-        const options = { maxSizeMB: 0.15, maxWidthOrHeight: 700, useWebWorker: true, fileType: "image/jpeg" };
+    // ===============================================
+    // ☁️ NOVA LÓGICA DE UPLOAD (STORAGE)
+    // ===============================================
+
+    // 1. Função que comprime a imagem (retorna arquivo leve)
+    async function comprimirArquivo(file) {
+        // Reduzi para 0.2MB e 800px para garantir velocidade no 4G
+        const options = { maxSizeMB: 0.2, maxWidthOrHeight: 800, useWebWorker: true };
         try {
-            const compressedFile = await imageCompression(file, options);
-            return await new Promise((resolve, reject) => {
-                const reader = new FileReader(); reader.readAsDataURL(compressedFile);
-                reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
-            });
-        } catch (error) { console.log(error); return null; }
+            return await imageCompression(file, options);
+        } catch (error) {
+            console.error("Erro na compressão", error);
+            return file; // Se falhar, tenta enviar o original
+        }
+    }
+
+    // 2. Função que SOBE para a nuvem e devolve o LINK
+    async function enviarParaNuvem(file, pasta) {
+        if (!file) return null;
+        
+        // Comprime
+        const arquivoPronto = await comprimirArquivo(file);
+        
+        // Cria nome único: lojas/ID/produtos/data_random.jpg
+        const nomeArquivo = `${new Date().getTime()}_${Math.floor(Math.random()*1000)}.jpg`;
+        const caminhoCompleto = `lojas/${LOJA_ID}/${pasta}/${nomeArquivo}`;
+        
+        // Sobe para o Storage
+        const storageRef = sRef(storage, caminhoCompleto);
+        await uploadBytes(storageRef, arquivoPronto);
+        
+        // Pega o link público
+        return await getDownloadURL(storageRef);
     }
 
     // ===============================================
@@ -258,6 +268,7 @@
             localStorage.setItem('minha_loja_id', LOJA_ID);
         }
 
+        // SISTEMA DE PAGAMENTO E VALIDADE (MANTIDO INTACTO)
         if (data.status === "pendente") {
             const MEU_PIX = "6485220a-c85c-4a83-a2b3-e3e230827e8c";
             document.body.innerHTML = `
@@ -280,6 +291,7 @@
         if(new Date() > (data.validade ? new Date(data.validade) : new Date())) {
             document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>VENCIDO</h1>"; return;
         }
+
         document.getElementById('confNome').value = data.nome || "";
         document.getElementById('confEnd').value = data.endereco || "";
         document.getElementById('confZap').value = data.zap || "";
@@ -287,19 +299,39 @@
         if(data.capa) document.getElementById('previewCapa').src = data.capa;
     });
 
+    // --- SALVAR CONFIGURAÇÃO (COM UPLOAD DE CAPA) ---
     document.getElementById('btnSalvarConfig').addEventListener('click', async () => {
         const btn = document.getElementById('btnSalvarConfig');
         const file = document.getElementById('inputCapa').files[0];
-        btn.innerHTML = "⏳ Salvando...";
+        
+        btn.innerHTML = "⏳ Enviando imagem...";
+        btn.disabled = true;
+
         try {
             let capaUrl = document.getElementById('previewCapa').src;
-            if(file) { btn.innerHTML = "⏳ Processando..."; const r = await processarImagem(file); if(r) capaUrl = r; }
+            // Se tiver arquivo novo, sobe pro Storage
+            if(file) { 
+                capaUrl = await enviarParaNuvem(file, 'config'); 
+            }
+            
             const snap = await get(configRef);
-            await set(configRef, { ...snap.val(), nome: document.getElementById('confNome').value, endereco: document.getElementById('confEnd').value, zap: document.getElementById('confZap').value, capa: capaUrl });
+            await set(configRef, { 
+                ...snap.val(), 
+                nome: document.getElementById('confNome').value, 
+                endereco: document.getElementById('confEnd').value, 
+                zap: document.getElementById('confZap').value, 
+                capa: capaUrl 
+            });
             showToast("Salvo!");
-        } catch(e) { alert(e); } finally { btn.innerText = "Salvar Alterações"; }
+        } catch(e) { 
+            alert("Erro: " + e.message); 
+        } finally { 
+            btn.innerText = "Salvar Alterações"; 
+            btn.disabled = false;
+        }
     });
 
+    // --- SALVAR PRODUTO (COM UPLOAD DE FOTO) ---
     const produtosRef = ref(db, `lojas/${LOJA_ID}/produtos`);
     document.getElementById('btnSalvarProd').addEventListener('click', async () => {
         const btn = document.getElementById('btnSalvarProd');
@@ -307,15 +339,38 @@
         const preco = document.getElementById('precoProd').value;
         const cat = document.getElementById('catProd').value;
         const file = document.getElementById('fotoProd').files[0];
+        
         if(!nome || !preco) return showToast("Preencha nome e preço!");
-        btn.innerHTML = "⏳";
+        
+        btn.innerHTML = "⏳ Enviando foto...";
+        btn.disabled = true;
+
         try {
             let imgUrl = "https://via.placeholder.com/150";
-            if(file) { btn.innerHTML = "⏳ Foto..."; const r = await processarImagem(file); if(r) imgUrl = r; }
-            await set(push(produtosRef), { nome, cat, preco: parseFloat(preco), img: imgUrl, codigo: Math.floor(10000 + Math.random() * 90000) });
+            // Se tiver arquivo novo, sobe pro Storage
+            if(file) { 
+                imgUrl = await enviarParaNuvem(file, 'produtos'); 
+            }
+            
+            await set(push(produtosRef), { 
+                nome, 
+                cat, 
+                preco: parseFloat(preco), 
+                img: imgUrl, 
+                codigo: Math.floor(10000 + Math.random() * 90000) 
+            });
+            
             showToast("Adicionado!");
-            document.getElementById('nomeProd').value = ""; document.getElementById('precoProd').value = ""; document.getElementById('fotoProd').value = "";
-        } catch(e) { alert(e); } finally { btn.innerText = "Adicionar Produto"; }
+            // Limpa os campos
+            document.getElementById('nomeProd').value = ""; 
+            document.getElementById('precoProd').value = ""; 
+            document.getElementById('fotoProd').value = "";
+        } catch(e) { 
+            alert("Erro no upload: " + e.message); 
+        } finally { 
+            btn.innerText = "Adicionar Produto"; 
+            btn.disabled = false;
+        }
     });
 
     onValue(produtosRef, (snapshot) => {
@@ -325,11 +380,15 @@
         if(data) {
             Object.keys(data).reverse().forEach(key => { 
                 const p = data[key];
+                // img agora é um link URL, carrega rápido
                 div.innerHTML += `<div class="product-item"><img src="${p.img}"><div class="info"><strong>${p.nome} #${p.codigo||'--'}</strong><span>R$ ${p.preco}</span></div><button class="btn-del" onclick="deletar('${key}')">🗑️</button></div>`;
             });
         }
     });
+
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
+    
+    // Preview local apenas para mostrar ao usuário antes de enviar
     document.getElementById('inputCapa').addEventListener('change', function(e) { if(e.target.files[0]) document.getElementById('previewCapa').src = URL.createObjectURL(e.target.files[0]); });
 </script>
 </body>
