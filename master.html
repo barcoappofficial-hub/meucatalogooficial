@@ -18,7 +18,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --premium: #a855f7; /* Cor para o plano anual */
+            --premium: #a855f7;
         }
 
         body {
@@ -132,7 +132,6 @@
         .btn-zap { background: rgba(37, 211, 102, 0.1); color: #25D366; }
         .btn-link { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
         
-        /* BOTOES DE RENOVAÇÃO */
         .btn-renovar { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
         .btn-renovar-anual { background: rgba(168, 85, 247, 0.1); color: var(--premium); }
         
@@ -216,6 +215,8 @@
     </div>
 
 <script type="module">
+    // IMPORTAÇÕES: Pegamos apenas o necessário do config. 
+    // Como o config agora exporta 'storage' também, não tem problema, pegamos só o que queremos.
     import { db, ref, onValue, set, remove, get } from './firebase-config.js';
 
     // --- AUTENTICAÇÃO SIMPLES ---
@@ -318,7 +319,6 @@
         document.getElementById('stFat').innerText = fat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // --- FUNÇÕES DE AÇÃO ---
     window.filtrarTabela = () => {
         const termo = document.getElementById('searchInput').value.toLowerCase();
         const tbody = document.getElementById('listaLojas');
