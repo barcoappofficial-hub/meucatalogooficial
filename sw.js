@@ -1,5 +1,5 @@
-// MUDAMOS PARA V7 PARA OBRIGAR A ATUALIZAÇÃO NOS CELULARES
-const CACHE_NAME = 'painel-gestor-v7-storage';
+// ATUALIZADO PARA V8 PARA GARANTIR QUE OS NOVOS LIMITES E O STORAGE SEJAM BAIXADOS
+const CACHE_NAME = 'painel-gestor-v8-final';
 
 const urlsToCache = [
   './',
@@ -8,24 +8,24 @@ const urlsToCache = [
   './catalogo.html',
   './manifest.json',
   './logo.png',
-  './firebase-config.js' // Adicionado para garantir o funcionamento offline do config
+  './firebase-config.js' // Essencial para a conexão com o banco
 ];
 
 // 1. Instalação: Baixa os arquivos novos
 self.addEventListener('install', (event) => {
-  // Força o SW a assumir o controle imediatamente
+  // Força o SW a assumir o controle imediatamente, sem esperar fechar o app
   self.skipWaiting();
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Cache aberto e arquivos salvos');
+        console.log('Cache v8 aberto e arquivos salvos');
         return cache.addAll(urlsToCache);
       })
   );
 });
 
-// 2. Ativação: Limpa os caches antigos (v6, v5...) para liberar espaço
+// 2. Ativação: Limpa os caches antigos (v7, v6...) para liberar espaço
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -39,7 +39,7 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  // Garante que as abas abertas já usem o novo SW
+  // Garante que as abas abertas já usem o novo SW imediatamente
   return self.clients.claim();
 });
 
@@ -48,7 +48,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Se achou no cache, retorna. Se não, busca na internet (ex: imagens do Firebase Storage)
+        // Se achou no cache, retorna. Se não, busca na internet (ex: imagens do Storage)
         return response || fetch(event.request);
       })
   );
