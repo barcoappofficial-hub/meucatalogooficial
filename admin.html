@@ -32,7 +32,7 @@
         
         .card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); margin-bottom: 20px; }
         
-        h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; color: white; }
+        h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
         
         input, select { width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px; font-size: 0.95rem; background: var(--input-bg); color: white; outline: none; margin-top: 5px; margin-bottom: 15px; transition: 0.3s; }
         input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
@@ -79,6 +79,10 @@
         .toast.show { opacity: 1; visibility: visible; top: 30px; }
         
         #btnInstall { display: none; margin-bottom: 20px; background: #22c55e; color: white; border: none; }
+        
+        /* NOVO: Estilo do Contador de Limite */
+        .limit-badge { font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); border: 1px solid var(--glass-border); }
+        .limit-alert { color: #f87171; border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.1); }
     </style>
 </head>
 <body>
@@ -111,7 +115,12 @@
             </div>
             <button id="btnSalvarProd" class="btn btn-primary" style="margin-top: 15px;">Adicionar Produto</button>
         </div>
-        <h2 style="font-size: 1rem; color: var(--text-muted); padding-left: 5px;">Seus Produtos</h2>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 5px; margin-bottom: 10px;">
+            <h2 style="font-size: 1rem; color: var(--text-muted); margin:0;">Seus Produtos</h2>
+            <span id="limitDisplay" class="limit-badge">Calculando...</span>
+        </div>
+        
         <div id="lista"><div style="text-align:center; padding: 40px; color: var(--text-muted);">Carregando...</div></div>
     </div>
 
@@ -156,14 +165,17 @@
     </nav>
 
 <script type="module">
-    // --- ATENÇÃO: IMPORTS ATUALIZADOS PARA INCLUIR STORAGE ---
     import { db, ref, push, set, onValue, remove, get, storage, sRef, uploadBytes, getDownloadURL } from './firebase-config.js';
 
     // ===============================================
-    // 🔒 1. AUTO-LOGIN E VERIFICAÇÃO INICIAL
+    // 🔒 1. AUTO-LOGIN E VARIÁVEIS GLOBAIS
     // ===============================================
     const params = new URLSearchParams(window.location.search);
     let LOJA_ID = params.get('id');
+    
+    // NOVO: Variáveis para controle de limite
+    let PLANO_ATUAL = "mensal"; 
+    let TOTAL_PRODUTOS = 0;
 
     if (!LOJA_ID) {
         const savedId = localStorage.getItem('minha_loja_id');
@@ -216,51 +228,34 @@
     }
 
     // ===============================================
-    // ☁️ NOVA LÓGICA DE UPLOAD (STORAGE)
+    // ☁️ LÓGICA DE UPLOAD (STORAGE)
     // ===============================================
-
-    // 1. Função que comprime a imagem (retorna arquivo leve)
     async function comprimirArquivo(file) {
-        // Reduzi para 0.2MB e 800px para garantir velocidade no 4G
         const options = { maxSizeMB: 0.2, maxWidthOrHeight: 800, useWebWorker: true };
-        try {
-            return await imageCompression(file, options);
-        } catch (error) {
-            console.error("Erro na compressão", error);
-            return file; // Se falhar, tenta enviar o original
-        }
+        try { return await imageCompression(file, options); } 
+        catch (error) { console.error("Erro na compressão", error); return file; }
     }
 
-    // 2. Função que SOBE para a nuvem e devolve o LINK
     async function enviarParaNuvem(file, pasta) {
         if (!file) return null;
-        
-        // Comprime
         const arquivoPronto = await comprimirArquivo(file);
-        
-        // Cria nome único: lojas/ID/produtos/data_random.jpg
         const nomeArquivo = `${new Date().getTime()}_${Math.floor(Math.random()*1000)}.jpg`;
         const caminhoCompleto = `lojas/${LOJA_ID}/${pasta}/${nomeArquivo}`;
-        
-        // Sobe para o Storage
         const storageRef = sRef(storage, caminhoCompleto);
         await uploadBytes(storageRef, arquivoPronto);
-        
-        // Pega o link público
         return await getDownloadURL(storageRef);
     }
 
     // ===============================================
-    // 🔥 2. FIREBASE LOGIC (COM BLINDAGEM)
+    // 🔥 FIREBASE LOGIC E LIMITES
     // ===============================================
     const configRef = ref(db, `lojas/${LOJA_ID}/config`);
     
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
         
-        // 🔒 TRAVA DE SEGURANÇA
         if (!data) {
-            alert("⚠️ Acesso Negado: Esta loja não existe.\nVocê será redirecionado para criar uma nova.");
+            alert("⚠️ Loja não encontrada.");
             localStorage.removeItem('minha_loja_id');
             window.location.href = "index.html";
             return;
@@ -268,7 +263,9 @@
             localStorage.setItem('minha_loja_id', LOJA_ID);
         }
 
-        // SISTEMA DE PAGAMENTO E VALIDADE (MANTIDO INTACTO)
+        // NOVO: CAPTURAR O PLANO (MENSAL ou ANUAL)
+        PLANO_ATUAL = data.plano_escolhido || "mensal";
+
         if (data.status === "pendente") {
             const MEU_PIX = "6485220a-c85c-4a83-a2b3-e3e230827e8c";
             document.body.innerHTML = `
@@ -297,9 +294,11 @@
         document.getElementById('confZap').value = data.zap || "";
         document.getElementById('txtValidade').innerText = new Date(data.validade).toLocaleDateString('pt-BR');
         if(data.capa) document.getElementById('previewCapa').src = data.capa;
+        
+        atualizarBadgeLimite(); // Atualiza a cor e texto do contador
     });
 
-    // --- SALVAR CONFIGURAÇÃO (COM UPLOAD DE CAPA) ---
+    // Salvar Configurações (Capa no Storage)
     document.getElementById('btnSalvarConfig').addEventListener('click', async () => {
         const btn = document.getElementById('btnSalvarConfig');
         const file = document.getElementById('inputCapa').files[0];
@@ -309,10 +308,7 @@
 
         try {
             let capaUrl = document.getElementById('previewCapa').src;
-            // Se tiver arquivo novo, sobe pro Storage
-            if(file) { 
-                capaUrl = await enviarParaNuvem(file, 'config'); 
-            }
+            if(file) { capaUrl = await enviarParaNuvem(file, 'config'); }
             
             const snap = await get(configRef);
             await set(configRef, { 
@@ -323,17 +319,22 @@
                 capa: capaUrl 
             });
             showToast("Salvo!");
-        } catch(e) { 
-            alert("Erro: " + e.message); 
-        } finally { 
-            btn.innerText = "Salvar Alterações"; 
-            btn.disabled = false;
-        }
+        } catch(e) { alert("Erro: " + e.message); } 
+        finally { btn.innerText = "Salvar Alterações"; btn.disabled = false; }
     });
 
-    // --- SALVAR PRODUTO (COM UPLOAD DE FOTO) ---
+    // --- LÓGICA DE PRODUTOS COM BLOQUEIO DE LIMITE ---
     const produtosRef = ref(db, `lojas/${LOJA_ID}/produtos`);
+    
     document.getElementById('btnSalvarProd').addEventListener('click', async () => {
+        // 🛑 NOVO: TRAVA DE SEGURANÇA DO PLANO 🛑
+        const limite = (PLANO_ATUAL === 'anual') ? 100 : 50;
+        
+        if (TOTAL_PRODUTOS >= limite) {
+            alert(`⚠️ LIMITE ATINGIDO!\n\nSeu plano ${PLANO_ATUAL.toUpperCase()} permite apenas ${limite} produtos.\n\nPara cadastrar mais, faça um upgrade para o Plano Anual ou entre em contato.`);
+            return; // PARA AQUI. Não deixa salvar.
+        }
+
         const btn = document.getElementById('btnSalvarProd');
         const nome = document.getElementById('nomeProd').value;
         const preco = document.getElementById('precoProd').value;
@@ -347,10 +348,7 @@
 
         try {
             let imgUrl = "https://via.placeholder.com/150";
-            // Se tiver arquivo novo, sobe pro Storage
-            if(file) { 
-                imgUrl = await enviarParaNuvem(file, 'produtos'); 
-            }
+            if(file) { imgUrl = await enviarParaNuvem(file, 'produtos'); }
             
             await set(push(produtosRef), { 
                 nome, 
@@ -361,34 +359,50 @@
             });
             
             showToast("Adicionado!");
-            // Limpa os campos
             document.getElementById('nomeProd').value = ""; 
             document.getElementById('precoProd').value = ""; 
             document.getElementById('fotoProd').value = "";
-        } catch(e) { 
-            alert("Erro no upload: " + e.message); 
-        } finally { 
-            btn.innerText = "Adicionar Produto"; 
-            btn.disabled = false;
-        }
+        } catch(e) { alert("Erro: " + e.message); } 
+        finally { btn.innerText = "Adicionar Produto"; btn.disabled = false; }
     });
 
+    // Lista Produtos e Conta o Total
     onValue(produtosRef, (snapshot) => {
         const div = document.getElementById('lista');
         div.innerHTML = "";
         const data = snapshot.val();
+        
         if(data) {
-            Object.keys(data).reverse().forEach(key => { 
+            const chaves = Object.keys(data);
+            TOTAL_PRODUTOS = chaves.length; // Atualiza contador global
+            
+            chaves.reverse().forEach(key => { 
                 const p = data[key];
-                // img agora é um link URL, carrega rápido
                 div.innerHTML += `<div class="product-item"><img src="${p.img}"><div class="info"><strong>${p.nome} #${p.codigo||'--'}</strong><span>R$ ${p.preco}</span></div><button class="btn-del" onclick="deletar('${key}')">🗑️</button></div>`;
             });
+        } else {
+            TOTAL_PRODUTOS = 0;
+            div.innerHTML = "<div style='text-align:center; padding:20px; color:#64748b'>Nenhum produto ainda.</div>";
         }
+        
+        atualizarBadgeLimite();
     });
 
+    // Função Visual do Badge
+    function atualizarBadgeLimite() {
+        const limite = (PLANO_ATUAL === 'anual') ? 100 : 50;
+        const badge = document.getElementById('limitDisplay');
+        badge.innerText = `${TOTAL_PRODUTOS} / ${limite} (Plano ${PLANO_ATUAL})`;
+        
+        if (TOTAL_PRODUTOS >= limite) {
+            badge.classList.add('limit-alert');
+            badge.innerText = `LIMITE CHEIO (${TOTAL_PRODUTOS}/${limite})`;
+        } else {
+            badge.classList.remove('limit-alert');
+        }
+    }
+
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
-    
-    // Preview local apenas para mostrar ao usuário antes de enviar
     document.getElementById('inputCapa').addEventListener('change', function(e) { if(e.target.files[0]) document.getElementById('previewCapa').src = URL.createObjectURL(e.target.files[0]); });
 </script>
 </body>
