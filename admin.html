@@ -9,7 +9,6 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -51,7 +50,6 @@
         .limit-badge { font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 20px; color: var(--text-muted); border: 1px solid var(--glass-border); }
         .limit-alert { color: #f87171; border-color: rgba(248, 113, 113, 0.3); background: rgba(248, 113, 113, 0.1); }
         
-        /* NOVO: Estilo dos Slots de Foto */
         .foto-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 15px; }
         .foto-slot { aspect-ratio: 1; background: #334155; border-radius: 8px; border: 1px dashed var(--glass-border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
         .foto-slot img { width: 100%; height: 100%; object-fit: cover; }
@@ -122,16 +120,12 @@
             <div class="foto-grid">
                 <label class="foto-slot" for="f1"><img id="prev1" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f1" accept="image/*" style="display:none" onchange="preview(this, 'prev1')">
-                
                 <label class="foto-slot" for="f2"><img id="prev2" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f2" accept="image/*" style="display:none" onchange="preview(this, 'prev2')">
-                
                 <label class="foto-slot" for="f3"><img id="prev3" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f3" accept="image/*" style="display:none" onchange="preview(this, 'prev3')">
-                
                 <label class="foto-slot" for="f4"><img id="prev4" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f4" accept="image/*" style="display:none" onchange="preview(this, 'prev4')">
-                
                 <label class="foto-slot" for="f5"><img id="prev5" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f5" accept="image/*" style="display:none" onchange="preview(this, 'prev5')">
             </div>
@@ -157,7 +151,6 @@
             <button onclick="compartilharZap()" class="btn btn-zap-share" style="margin-bottom: 12px;">
                 <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> Enviar no WhatsApp
             </button>
-            
             <button onclick="copiarLink()" class="btn btn-primary">
                 <i class='bx bx-copy'></i> Copiar Link
             </button>
@@ -187,7 +180,7 @@
     }
     document.getElementById('displayId').innerText = LOJA_ID;
 
-    // === PWA & UI ===
+    // === PWA ===
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
     let deferredPrompt; window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; const btn = document.getElementById('btnInstall'); btn.style.display = 'block'; btn.addEventListener('click', () => { deferredPrompt.prompt(); }); });
 
@@ -199,50 +192,25 @@
     }
 
     function showToast(msg) { const t = document.getElementById('toast'); t.innerHTML = `<i class='bx bx-check-circle'></i> <span>${msg}</span>`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-
     window.sair = () => { if(confirm("Deseja sair?")) { localStorage.removeItem('minha_loja_id'); window.location.href = "index.html"; } }
 
     window.preview = (input, imgId) => {
         if(input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(e) { 
-                const img = document.getElementById(imgId);
-                img.src = e.target.result; 
-                img.style.display = "block";
-            }
+            reader.onload = function(e) { document.getElementById(imgId).src = e.target.result; document.getElementById(imgId).style.display = "block"; }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // === LÓGICA DE COMPARTILHAMENTO CORRIGIDA ===
-    function gerarTextoDivulgacao() {
-        // Pega o nome. Se estiver vazio, usa "Minha Loja"
-        // .trim() remove espaços acidentais no começo ou fim que o usuário digitar
-        const nomeLoja = (document.getElementById('confNome').value || "Minha Loja").trim();
-        
-        // Gera o link. 
-        // Se você quer ir para a CAPA BONITA, mantenha "entrada.html"
-        // Se você quer ir DIRETO PARA OS PRODUTOS (como no seu exemplo), use "catalogo.html"
-        const link = window.location.href.replace("admin.html", "catalogo.html");
-        
-        // AQUI ESTÁ A CORREÇÃO:
-        // Mudei de `*${nomeLoja} *` para `*${nomeLoja}*` (sem espaço antes do último asterisco)
-        return `📦 *${nomeLoja}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados. Faça seu pedido online!\n\n👇👇👇\n${link}`;
+    function gerarTexto() {
+        const nome = (document.getElementById('confNome').value || "Minha Loja").trim();
+        const link = window.location.href.replace("admin.html", "entrada.html");
+        return `📦 *${nome}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados. Faça seu pedido online!\n\n👇👇👇\n${link}`;
     }
 
-    window.copiarLink = () => { 
-        const msg = gerarTextoDivulgacao();
-        navigator.clipboard.writeText(msg); 
-        showToast("Texto copiado!"); 
-    }
+    window.copiarLink = () => { navigator.clipboard.writeText(gerarTexto()); showToast("Copiado!"); }
+    window.compartilharZap = () => { const msg = gerarTexto(); window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank'); }
 
-    window.compartilharZap = () => {
-        const msg = gerarTextoDivulgacao();
-        // Abre o WhatsApp permitindo escolher o contato
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    // === COMPRESSÃO EXTREMA ===
     async function comprimirArquivo(file) {
         const options = { maxSizeMB: 0.1, maxWidthOrHeight: 600, useWebWorker: true };
         try { return await imageCompression(file, options); } catch (e) { return file; }
@@ -258,95 +226,138 @@
         return await getDownloadURL(storageRef);
     }
 
-    // === CARREGAR DADOS ===
+    // === CARREGAR DADOS E SISTEMA DE BLOQUEIO ===
     const configRef = ref(db, `lojas/${LOJA_ID}/config`);
+    
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
-        if (!data) return;
-
-        PLANO_ATUAL = data.plano_escolhido || "mensal";
-        if (data.status === "pendente" || (new Date() > new Date(data.validade))) {
-            if(data.status !== "pendente") document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>VENCIDO</h1>";
-            return; 
+        
+        // 1. Se não existir dados, sai
+        if (!data) {
+            alert("Erro: Loja não encontrada.");
+            window.location.href = "index.html";
+            return;
         }
 
-        if (!document.getElementById('confNome')) { window.location.reload(); return; }
+        // 2. SISTEMA DE TRAVA (Bloqueia TUDO se for pendente)
+        if (data.status === "pendente") {
+            const MEU_PIX = "6485220a-c85c-4a83-a2b3-e3e230827e8c";
+            const MEU_ZAP = "5597984431811"; 
+
+            // Sobrescreve o corpo do site com a TELA DE ATIVAÇÃO
+            document.body.innerHTML = `
+                <div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center; padding:20px; background: linear-gradient(135deg, #0f172a 0%, #000000 100%);">
+                    <i class='bx bxs-lock-alt' style="font-size: 4rem; color: #fbbf24; margin-bottom: 20px;"></i>
+                    <h1 style="margin:0; font-size:1.8rem;">Ativar Loja</h1>
+                    <p style="color:#94a3b8; margin-bottom: 30px;">Aguardando pagamento para liberação.</p>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px dashed #fbbf24; width: 100%; max-width: 350px; margin-bottom: 20px;">
+                        <p style="margin:0 0 10px 0; font-size: 0.9rem; color: #cbd5e1;">Chave Pix (Copia e Cola):</p>
+                        <div style="background: #0f172a; padding: 10px; border-radius: 8px; word-break: break-all; font-family: monospace; color: #fbbf24; margin-bottom: 10px; user-select: all; font-size:0.9rem;">
+                            ${MEU_PIX}
+                        </div>
+                        <button onclick="copiarPix()" class="btn" style="background: #fbbf24; color: black; font-weight:bold; width:100%; border:none; padding:12px; border-radius:8px; cursor:pointer;">
+                            <i class='bx bx-copy'></i> COPIAR PIX
+                        </button>
+                    </div>
+
+                    <button onclick="enviarComprovante()" class="btn" style="background: #25D366; color: white; margin-bottom: 30px; max-width: 350px; width:100%; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> ENVIAR COMPROVANTE
+                    </button>
+
+                    <div style="width: 100%; max-width: 350px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                        <p style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Insira seu código de ativação:</p>
+                        <input type="text" id="inputCodigo" placeholder="Ex: K9X2" style="padding:15px; border-radius:10px; width:100%; text-align:center; margin-bottom:10px; border: 1px solid #334155; background: rgba(0,0,0,0.3); color: #facc15; outline: none; font-size: 1.5rem; text-transform:uppercase; letter-spacing: 5px; font-weight:bold;">
+                        <button onclick="ativarLoja()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">LIBERAR ACESSO</button>
+                    </div>
+                </div>`;
+
+            // Funções exclusivas da tela de bloqueio
+            window.copiarPix = () => { navigator.clipboard.writeText(MEU_PIX); alert("Chave Pix copiada!"); }
+            
+            window.enviarComprovante = () => {
+                const msg = `Olá! Segue o comprovante da loja *${data.nome || LOJA_ID}*. Aguardo meu código.`;
+                window.open(`https://wa.me/${MEU_ZAP}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+
+            window.ativarLoja = async () => {
+                const input = document.getElementById('inputCodigo');
+                // Compara ignorando maiúsculas/minúsculas e espaços
+                if(input.value.trim().toUpperCase() == data.codigo_secreto) {
+                    const hoje = new Date();
+                    hoje.setDate(hoje.getDate() + (data.plano_escolhido === 'anual' ? 365 : 30));
+                    
+                    await set(configRef, { ...data, status: "ativo", validade: hoje.toISOString() });
+                    alert("✅ Sucesso! Bem-vindo ao sistema.");
+                    window.location.reload(); // Recarrega para mostrar o painel
+                } else { 
+                    alert("❌ Código inválido! Verifique no seu WhatsApp."); 
+                }
+            }
+            return; // PARA A EXECUÇÃO AQUI (Não carrega o resto do painel)
+        }
+
+        // 3. Verifica Validade
+        if(new Date() > (data.validade ? new Date(data.validade) : new Date())) {
+            document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>SEU PLANO VENCEU<br><br>Entre em contato para renovar.</h1>"; 
+            return;
+        }
+
+        // 4. Se chegou aqui, está ATIVO. Carrega o painel normal.
+        PLANO_ATUAL = data.plano_escolhido || "mensal";
+        if (!document.getElementById('confNome')) { window.location.reload(); return; } // Segurança contra bug de renderização
 
         document.getElementById('confNome').value = data.nome || "";
         document.getElementById('confEnd').value = data.endereco || "";
         document.getElementById('confZap').value = data.zap || "";
         document.getElementById('txtValidade').innerText = new Date(data.validade).toLocaleDateString('pt-BR');
 
-        // Carregar fotos do carrossel existentes
         const fotos = data.fotos_loja || [];
         for(let i=0; i<5; i++) {
-            if(fotos[i]) {
-                const img = document.getElementById(`prev${i+1}`);
-                img.src = fotos[i];
-                img.style.display = "block";
-            }
+            if(fotos[i]) { document.getElementById(`prev${i+1}`).src = fotos[i]; document.getElementById(`prev${i+1}`).style.display = "block"; }
         }
-        
         atualizarBadgeLimite();
     });
 
-    // DASHBOARD
+    // ... Resto do código do painel (Upload, Produtos, etc) ...
     const metricasRef = ref(db, `lojas/${LOJA_ID}/metricas/visitas`);
     onValue(metricasRef, (snap) => { if(document.getElementById('txtVisitas')) document.getElementById('txtVisitas').innerText = snap.val() || 0; });
 
-    // === SALVAR CONFIGURAÇÃO (CARROSSEL) ===
     document.getElementById('btnSalvarConfig').addEventListener('click', async () => {
         const btn = document.getElementById('btnSalvarConfig');
         btn.innerHTML = "⏳ Salvando..."; btn.disabled = true;
-
         try {
             const snap = await get(configRef);
             const dadosAtuais = snap.val();
             let listaFotos = dadosAtuais.fotos_loja || [];
-
-            // Loop para enviar as 5 fotos (se houver novas)
             for(let i=1; i<=5; i++) {
                 const fileInput = document.getElementById(`f${i}`);
                 if(fileInput.files[0]) {
                     const url = await enviarParaNuvem(fileInput.files[0], 'loja');
-                    listaFotos[i-1] = url; // Atualiza a posição no array
+                    listaFotos[i-1] = url;
                 }
             }
-            
             const capaPrincipal = listaFotos[0] || dadosAtuais.capa || "";
-
-            await set(configRef, { 
-                ...dadosAtuais, 
-                nome: document.getElementById('confNome').value, 
-                endereco: document.getElementById('confEnd').value, 
-                zap: document.getElementById('confZap').value, 
-                capa: capaPrincipal,
-                fotos_loja: listaFotos 
-            });
-            showToast("Dados atualizados!");
+            await set(configRef, { ...dadosAtuais, nome: document.getElementById('confNome').value, endereco: document.getElementById('confEnd').value, zap: document.getElementById('confZap').value, capa: capaPrincipal, fotos_loja: listaFotos });
+            showToast("Atualizado!");
         } catch(e) { alert("Erro: " + e.message); } 
         finally { btn.innerText = "Salvar Tudo"; btn.disabled = false; }
     });
 
-    // --- PRODUTOS ---
     const produtosRef = ref(db, `lojas/${LOJA_ID}/produtos`);
     document.getElementById('btnSalvarProd').addEventListener('click', async () => {
         const limite = (PLANO_ATUAL === 'anual') ? 100 : 50;
         if (TOTAL_PRODUTOS >= limite) { alert(`Limite do plano ${PLANO_ATUAL} atingido!`); return; }
-
         const btn = document.getElementById('btnSalvarProd');
         const nome = document.getElementById('nomeProd').value;
         const preco = document.getElementById('precoProd').value;
         const cat = document.getElementById('catProd').value;
         const file = document.getElementById('fotoProd').files[0];
-        
         if(!nome || !preco) return showToast("Preencha nome e preço!");
         btn.innerHTML = "⏳ ..."; btn.disabled = true;
-
         try {
             let imgUrl = "https://via.placeholder.com/150";
             if(file) { imgUrl = await enviarParaNuvem(file, 'produtos'); }
-            
             await set(push(produtosRef), { nome, cat, preco: parseFloat(preco), img: imgUrl, codigo: Math.floor(10000 + Math.random() * 90000) });
             showToast("Adicionado!");
             document.getElementById('nomeProd').value = ""; document.getElementById('precoProd').value = ""; document.getElementById('fotoProd').value = "";
@@ -373,5 +384,3 @@
 </script>
 </body>
 </html>
-
-
