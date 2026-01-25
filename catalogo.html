@@ -3,177 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta property="og:title" content="📦 Acesse nosso Catálogo Digital">
-    <meta property="og:description" content="Clique para ver fotos, preços e fazer seu pedido online agora mesmo!">
-    <meta property="og:image" content="https://www.nyscreation.com/logo.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:type" content="website">
-
+    <meta property="og:title" content="📦 Catálogo Digital">
     <title>Catálogo</title>
     
     <style>
-        /* OTIMIZAÇÃO 1: Fontes de Sistema (Carregamento Zero) */
-        /* 'Anton' substituída por Impact/Arial Black */
-        /* 'Roboto' substituída por fontes padrão do sistema */
+        body { background: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
+        .folha { background: white; width: 100%; max-width: 600px; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
         
-        body { 
-            background: #1a1a1a; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            margin: 0; 
-            min-height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-        }
-
-        .folha { background: white; width: 100%; max-width: 600px; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        header { 
-            background-color: #dc2626; 
-            background-size: cover; 
-            background-position: center; 
-            padding: 40px 20px; 
-            text-align: center; 
-            border-bottom: 8px solid #facc15; 
-            color: white; 
-        }
-
-        h1 { 
-            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; /* Visual similar ao Anton */
-            font-size: 2.8rem; 
-            margin: 0; 
-            text-transform: uppercase; 
-            text-shadow: 2px 2px 5px black; 
-            letter-spacing: 1px;
-        }
-        
-        /* SEU AJUSTE: Endereço com fundo preto 50% */
-        #txtEnd { 
-            background-color: rgba(0, 0, 0, 0.5); 
-            display: inline-block; 
-            padding: 5px 15px; 
-            border-radius: 20px; 
-            margin-top: 10px;
-            font-size: 0.9rem;
-            backdrop-filter: blur(2px);
-        }
-
-        .faixa { 
-            background: black; 
-            color: #facc15; 
-            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; 
-            text-align: center; 
-            font-size: 1.5rem; 
-            padding: 8px; 
-            margin: 20px auto; 
-            width: 90%; 
-            transform: skewX(-10deg); 
-        }
-
+        /* HEADER PADRÃO (SÓ APARECE DEPOIS) */
+        header { background-color: #dc2626; background-size: cover; background-position: center; padding: 40px 20px; text-align: center; border-bottom: 8px solid #facc15; color: white; }
+        h1 { font-family: Impact, sans-serif; font-size: 2.8rem; margin: 0; text-transform: uppercase; text-shadow: 2px 2px 5px black; letter-spacing: 1px; }
+        #txtEnd { background-color: rgba(0, 0, 0, 0.5); display: inline-block; padding: 5px 15px; border-radius: 20px; margin-top: 10px; font-size: 0.9rem; backdrop-filter: blur(2px); }
+        .faixa { background: black; color: #facc15; font-family: Impact, sans-serif; text-align: center; font-size: 1.5rem; padding: 8px; margin: 20px auto; width: 90%; transform: skewX(-10deg); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 10px; }
         .card { border: 1px solid #ddd; padding: 10px; text-align: center; display: flex; flex-direction: column; background: white; border-radius: 8px; }
-        
-        /* SEU AJUSTE: Imagem preenchendo espaço */
-        .card img { 
-            width: 100%; 
-            height: 160px; 
-            object-fit: cover; 
-            margin-bottom: 10px; 
-            cursor: zoom-in; 
-            border-radius: 4px;
-            background-color: #f0f0f0; /* Fundo cinza enquanto carrega */
-        }
-        
-        .preco { 
-            background: #facc15; 
-            color: black; 
-            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; 
-            font-size: 1.5rem; 
-            padding: 5px; 
-            transform: rotate(-2deg); 
-            margin: 5px auto; 
-            display: inline-block; 
-        }
-
+        .card img { width: 100%; height: 160px; object-fit: cover; margin-bottom: 10px; border-radius: 4px; background-color: #f0f0f0; }
+        .preco { background: #facc15; color: black; font-family: Impact, sans-serif; font-size: 1.5rem; padding: 5px; transform: rotate(-2deg); margin: 5px auto; display: inline-block; }
         .btn { background: #16a34a; color: white; text-decoration: none; padding: 10px; font-weight: bold; border-radius: 4px; display: block; }
-        
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
-        .modal-content { max-width: 90%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .modal-content { max-width: 90%; max-height: 80vh; }
+
+        /* === ESTILOS DA LANDING PAGE (CAPA INTERATIVA) === */
+        #landingPage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a1a1a; z-index: 5000;
+            display: flex; flex-direction: column;
+        }
+        
+        /* Carrossel Full Screen */
+        .carousel-container {
+            flex: 1; /* Ocupa todo o espaço disponível */
+            position: relative;
+            overflow: hidden;
+        }
+        .carousel-slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 1s ease-in-out;
+        }
+        .carousel-slide.active { opacity: 1; }
+        
+        /* Overlay Escura para texto aparecer */
+        .overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 100%);
+            padding: 40px 20px; padding-bottom: 60px;
+            text-align: center; color: white;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        
+        .land-nome {
+            font-family: Impact, sans-serif; font-size: 3.5rem;
+            text-transform: uppercase; margin: 0; letter-spacing: 2px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            line-height: 1;
+        }
+        .land-end {
+            margin-top: 10px; font-size: 1rem; opacity: 0.9;
+            background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px;
+        }
+        .btn-entrar {
+            margin-top: 25px;
+            background: #facc15; color: black;
+            font-family: Impact, sans-serif; font-size: 1.5rem;
+            padding: 15px 40px; border-radius: 50px;
+            border: none; cursor: pointer;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.4);
+            animation: pulsar 2s infinite;
+        }
+        @keyframes pulsar { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div id="modalZoom" class="modal" onclick="this.style.display='none'">
-        <img class="modal-content" id="imgZoom">
+    <div id="modalZoom" class="modal" onclick="this.style.display='none'"><img class="modal-content" id="imgZoom"></div>
+
+    <div id="landingPage">
+        <div class="carousel-container" id="carouselBox">
+            </div>
+        <div class="overlay">
+            <h1 class="land-nome" id="landNome">Carregando...</h1>
+            <div class="land-end" id="landEnd">...</div>
+            <button class="btn-entrar" onclick="entrarNoCatalogo()">CONHECER CATÁLOGO</button>
+        </div>
     </div>
 
-    <div class="folha">
+    <div class="folha" id="folhaPrincipal" style="display:none;">
         <header id="headerLoja"><h1 id="txtNome">...</h1><div id="txtEnd">...</div></header>
         <div id="conteudo" style="padding-bottom: 50px;"></div>
     </div>
 
 <script type="module">
-    import { db, ref, onValue } from './firebase-config.js';
+    import { db, ref, onValue, runTransaction } from './firebase-config.js';
+    
     const params = new URLSearchParams(window.location.search);
     const LOJA_ID = params.get('id');
     if (!LOJA_ID) window.location.href = "index.html";
 
+    // CONTADOR DE VISITAS
+    const chaveSessao = `visitou_${LOJA_ID}`;
+    if (!sessionStorage.getItem(chaveSessao)) {
+        runTransaction(ref(db, `lojas/${LOJA_ID}/metricas/visitas`), (n) => (n || 0) + 1);
+        sessionStorage.setItem(chaveSessao, "true");
+    }
+
+    // LÓGICA DO BOTÃO "CONHECER"
+    window.entrarNoCatalogo = () => {
+        document.getElementById('landingPage').style.opacity = '0';
+        document.getElementById('landingPage').style.transition = '0.5s';
+        setTimeout(() => {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('folhaPrincipal').style.display = 'flex';
+        }, 500);
+    }
     window.verImagem = (src) => { document.getElementById('imgZoom').src = src; document.getElementById('modalZoom').style.display = "flex"; }
 
     let ZAP = ""; let NOME = "";
-    
-    // 1. CARREGAMENTO DOS DADOS DA LOJA
+
+    // 1. CARREGAR DADOS
     onValue(ref(db, `lojas/${LOJA_ID}/config`), (snap) => {
         const d = snap.val();
         if(d) {
-            if(d.status === 'pendente' || new Date() > new Date(d.validade)) { document.body.innerHTML = "<h1 style='text-align:center;padding:50px;color:white;'>Loja Indisponível</h1>"; return; }
+            if(d.status === 'pendente' || new Date() > new Date(d.validade)) { document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>Loja Indisponível</h1>"; return; }
             NOME = d.nome; ZAP = d.zap;
             
-            document.title = NOME + " | Catálogo";
+            // PREENCHE HEADER PADRÃO
             document.getElementById('txtNome').innerText = NOME;
             document.getElementById('txtEnd').innerText = d.endereco || "";
             if(d.capa) document.getElementById('headerLoja').style.backgroundImage = `url('${d.capa}')`;
+
+            // PREENCHE LANDING PAGE
+            document.getElementById('landNome').innerText = NOME;
+            document.getElementById('landEnd').innerText = d.endereco || "";
             
+            // PREENCHE CARROSSEL
+            const fotos = d.fotos_loja || (d.capa ? [d.capa] : []); // Se não tiver array, usa a capa antiga
+            const box = document.getElementById('carouselBox');
+            box.innerHTML = "";
+            
+            if(fotos.length > 0) {
+                fotos.forEach((url, index) => {
+                    const div = document.createElement('div');
+                    div.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
+                    div.style.backgroundImage = `url('${url}')`;
+                    box.appendChild(div);
+                });
+                iniciarCarrossel();
+            } else {
+                // Fallback cinza se não tiver foto nenhuma
+                box.innerHTML = '<div class="carousel-slide active" style="background:#333;"></div>';
+            }
+
             carregarProdutos();
         }
     });
 
-    // 2. CARREGAMENTO DOS PRODUTOS (OTIMIZADO)
+    // LÓGICA DE ROTAÇÃO DO CARROSSEL
+    function iniciarCarrossel() {
+        const slides = document.querySelectorAll('.carousel-slide');
+        if(slides.length <= 1) return;
+        let index = 0;
+        setInterval(() => {
+            slides[index].classList.remove('active');
+            index = (index + 1) % slides.length;
+            slides[index].classList.add('active');
+        }, 3000); // Troca a cada 3 segundos
+    }
+
     function carregarProdutos() {
         onValue(ref(db, `lojas/${LOJA_ID}/produtos`), (snap) => {
             const container = document.getElementById('conteudo');
             const d = snap.val();
-            
             if(!d) { container.innerHTML = "<p style='text-align:center; padding:20px;'>Nenhum produto cadastrado.</p>"; return; }
             
-            const cats = {};
-            Object.values(d).forEach(p => { if(!cats[p.cat]) cats[p.cat] = []; cats[p.cat].push(p); });
-
-            // BUFFER: Cria todo o HTML na memória antes de jogar na tela (Muito mais rápido)
-            let htmlFinal = "";
+            const cats = {}; Object.values(d).forEach(p => { if(!cats[p.cat]) cats[p.cat] = []; cats[p.cat].push(p); });
+            let html = "";
 
             for(const [k, v] of Object.entries(cats)) {
-                htmlFinal += `<div class="faixa">${k}</div><div class="grid">`;
-                
+                html += `<div class="faixa">${k}</div><div class="grid">`;
                 v.forEach(p => {
-                    const link = ZAP ? `https://wa.me/${ZAP}?text=${encodeURIComponent(`Olá ${NOME}! Quero: ${p.nome} (Cód: ${p.codigo})`)}` : "#";
-                    const precoFormatado = parseFloat(p.preco).toFixed(2).replace('.', ',');
-
-                    // OTIMIZAÇÃO 2: loading="lazy" nas imagens
-                    htmlFinal += `
-                    <div class="card">
-                        <img src="${p.img}" loading="lazy" onclick="verImagem('${p.img}')">
-                        <strong>${p.nome}</strong>
-                        <small>Cód: ${p.codigo}</small>
-                        <div class="preco">R$ ${precoFormatado}</div>
-                        <a href="${link}" target="_blank" class="btn">COMPRAR</a>
-                    </div>`;
+                    const link = ZAP ? `https://wa.me/${ZAP}?text=${encodeURIComponent(`Quero: ${p.nome}`)}` : "#";
+                    html += `<div class="card"><img src="${p.img}" loading="lazy" onclick="verImagem('${p.img}')"><strong>${p.nome}</strong><div class="preco">R$ ${parseFloat(p.preco).toFixed(2).replace('.', ',')}</div><a href="${link}" target="_blank" class="btn">COMPRAR</a></div>`;
                 });
-                
-                htmlFinal += `</div>`;
+                html += `</div>`;
             }
-            
-            // Joga tudo na tela de uma vez só
-            container.innerHTML = htmlFinal;
+            container.innerHTML = html;
         });
     }
 </script>
