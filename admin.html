@@ -276,7 +276,7 @@
             window.copiarPix = () => { navigator.clipboard.writeText(MEU_PIX); alert("Chave Pix copiada!"); }
             
             window.enviarComprovante = () => {
-                const msg = `Olá! Segue o comprovante da loja *${data.nome || LOJA_ID}*. Aguardo meu código.`;
+                const msg = `Olá! Desejo Solicitar o Código de Ativação da Minha Loja *${data.nome || LOJA_ID}*. Aguardo meu código.`;
                 window.open(`https://wa.me/${MEU_ZAP}?text=${encodeURIComponent(msg)}`, '_blank');
             }
 
@@ -384,4 +384,5 @@
 </script>
 </body>
 </html>
+
 
