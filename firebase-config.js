@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, remove, get, child, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+// ATUALIZADO: Adicionado 'runTransaction' na lista de importações abaixo
+import { getDatabase, ref, push, set, onValue, remove, get, child, update, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 // NOVAS IMPORTAÇÕES DO STORAGE (sRef usado para não confundir com o ref do banco)
 import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
@@ -18,5 +19,5 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const storage = getStorage(app); // Inicializa o Storage
 
-// Exporta tudo: o antigo (db, ref...) e o novo (storage, sRef...)
-export { db, ref, push, set, onValue, remove, get, update, child, storage, sRef, uploadBytes, getDownloadURL };
+// Exporta tudo: o antigo (db, ref...), o novo (storage, sRef...) e o runTransaction
+export { db, ref, push, set, onValue, remove, get, update, child, storage, sRef, uploadBytes, getDownloadURL, runTransaction };
