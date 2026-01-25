@@ -147,21 +147,15 @@
             const nome = prompt("Qual o nome da sua loja (ID)?");
             if(nome) {
                 const slug = criarSlug(nome);
-                
-                // --- CHECAGEM DE SEGURANÇA ---
-                // Mostra um carregando básico no cursor
                 document.body.style.cursor = 'wait';
-                
                 try {
                     const lojaRef = ref(db, 'lojas/' + slug);
                     const snapshot = await get(lojaRef);
 
                     if (snapshot.exists()) {
-                        // LOJA EXISTE: Permite entrar
                         localStorage.setItem('minha_loja_id', slug);
                         window.location.href = `admin.html?id=${slug}`;
                     } else {
-                        // LOJA NÃO EXISTE: Barra o acesso
                         alert("❌ Loja não encontrada!\nVerifique se digitou o nome corretamente ou crie uma nova conta.");
                     }
                 } catch(e) {
@@ -206,7 +200,8 @@
                 const snapshot = await get(lojaRef);
 
                 if(!snapshot.exists()) {
-                    const codigoAtivacao = Math.floor(1000 + Math.random() * 9000).toString();
+                    // GERAÇÃO DE CÓDIGO SEGURO (Letras e Números)
+                    const codigoAtivacao = Math.random().toString(36).substring(2, 6).toUpperCase();
                     
                     await set(lojaRef, {
                         config: { 
@@ -226,6 +221,7 @@
                     const msg = `Olá! Quero ativar a loja *${nome}* no plano *${selectedPlan.toUpperCase()}*. Aguardo a chave.`;
                     window.open(`https://wa.me/${seuNumero}?text=${encodeURIComponent(msg)}`, '_blank');
                     
+                    // Redireciona para o admin (que vai mostrar a tela de bloqueio)
                     setTimeout(() => {
                         window.location.href = `admin.html?id=${slug}`;
                     }, 1000);
