@@ -34,6 +34,7 @@
         .btn:active { transform: scale(0.98); opacity: 0.9; } 
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
         .btn-outline { border: 2px solid var(--primary); background: transparent; color: var(--primary); }
+        .btn-zap-share { background: #25D366; color: white; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); }
         .btn-del { color: #f87171; background: rgba(239, 68, 68, 0.1); border: none; padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .product-item { display: flex; align-items: center; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--glass-border); }
         .product-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 15px; background: #334155; }
@@ -151,14 +152,17 @@
             <button id="btnInstall" class="btn">📲 Instalar Aplicativo</button>
             <i class='bx bx-store' style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
             <h2>Sua Loja está Online!</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Divulgue o link abaixo para seus clientes:</p>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Divulgue sua loja agora mesmo:</p>
             
-            <a href="#" id="linkLojaBtn" target="_blank" class="btn btn-outline" style="margin-bottom: 12px;">
-                <i class='bx bx-link-external'></i> Abrir Capa
-            </a>
-            <button onclick="copiarLink()" class="btn btn-primary"><i class='bx bx-copy'></i> Copiar Link</button>
+            <button onclick="compartilharZap()" class="btn btn-zap-share" style="margin-bottom: 12px;">
+                <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> Enviar no WhatsApp
+            </button>
+            
+            <button onclick="copiarLink()" class="btn btn-primary">
+                <i class='bx bx-copy'></i> Copiar Link
+            </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 7.5 Seguro</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 8.0 Seguro</div>
     </div>
 
     <nav class="bottom-nav">
@@ -196,11 +200,6 @@
 
     function showToast(msg) { const t = document.getElementById('toast'); t.innerHTML = `<i class='bx bx-check-circle'></i> <span>${msg}</span>`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
-    // AJUSTADO: Link agora manda para entrada.html
-    const linkLoja = window.location.href.replace("admin.html", "entrada.html");
-    document.getElementById('linkLojaBtn').href = linkLoja;
-    window.copiarLink = () => { const nomeLoja = document.getElementById('confNome').value || "Loja"; const msg = `📦 *${nomeLoja}* - Catálogo Digital\n\nClique no link para ver:\n${linkLoja}`; navigator.clipboard.writeText(msg); showToast("Link copiado!"); }
-    
     window.sair = () => { if(confirm("Deseja sair?")) { localStorage.removeItem('minha_loja_id'); window.location.href = "index.html"; } }
 
     window.preview = (input, imgId) => {
@@ -215,9 +214,29 @@
         }
     }
 
+    // === LÓGICA DE COMPARTILHAMENTO (NOVA) ===
+    function gerarTextoDivulgacao() {
+        const nomeLoja = document.getElementById('confNome').value || "Minha Loja";
+        // Gera o link para a CAPA (entrada.html)
+        const link = window.location.href.replace("admin.html", "entrada.html");
+        
+        return `📦 *${nomeLoja} * - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados. Faça seu pedido online!\n\n👇👇👇\n${link}`;
+    }
+
+    window.copiarLink = () => { 
+        const msg = gerarTextoDivulgacao();
+        navigator.clipboard.writeText(msg); 
+        showToast("Texto copiado!"); 
+    }
+
+    window.compartilharZap = () => {
+        const msg = gerarTextoDivulgacao();
+        // Abre o WhatsApp permitindo escolher o contato
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
     // === COMPRESSÃO EXTREMA ===
     async function comprimirArquivo(file) {
-        // maxSizeMB 0.1 (100KB) e largura máxima 600px para carregar muito rápido
         const options = { maxSizeMB: 0.1, maxWidthOrHeight: 600, useWebWorker: true };
         try { return await imageCompression(file, options); } catch (e) { return file; }
     }
@@ -287,7 +306,6 @@
                 }
             }
             
-            // Usa a primeira foto como capa padrão (fallback)
             const capaPrincipal = listaFotos[0] || dadosAtuais.capa || "";
 
             await set(configRef, { 
@@ -296,7 +314,7 @@
                 endereco: document.getElementById('confEnd').value, 
                 zap: document.getElementById('confZap').value, 
                 capa: capaPrincipal,
-                fotos_loja: listaFotos // Salva o array novo
+                fotos_loja: listaFotos 
             });
             showToast("Dados atualizados!");
         } catch(e) { alert("Erro: " + e.message); } 
