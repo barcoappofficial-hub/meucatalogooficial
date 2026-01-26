@@ -1,11 +1,11 @@
-// ATUALIZADO PARA V9 - CORREÇÃO DE CACHE E NOVOS ARQUIVOS
-const CACHE_NAME = 'painel-gestor-v9-fix';
+// ATUALIZADO PARA V10 - CORREÇÃO CRÍTICA DE IMAGEM (CORS)
+const CACHE_NAME = 'painel-gestor-v10-cors';
 
 const urlsToCache = [
   './',
   './index.html',
   './admin.html',
-  './entrada.html', // ADICIONADO: A nova capa precisa ser salva
+  './entrada.html', // A nova capa precisa ser salva
   './catalogo.html',
   './manifest.json',
   './logo.png',
@@ -19,13 +19,13 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Cache v9 aberto e arquivos salvos');
+        console.log('Cache v10 aberto e arquivos salvos');
         return cache.addAll(urlsToCache);
       })
   );
 });
 
-// 2. Ativação: Limpa os caches antigos (v8, v7...)
+// 2. Ativação: Limpa os caches antigos (v9, v8...)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -42,13 +42,20 @@ self.addEventListener('activate', (event) => {
   return self.clients.claim();
 });
 
-// 3. Interceptação: Estratégia "Network First" para HTML (Evita travar se atualizar)
-// Para imagens e CSS, usa Cache First. Para HTML, tenta a rede primeiro.
+// 3. Interceptação: Gerencia o tráfego de rede
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // Se for arquivo HTML (admin, entrada, catalogo), tenta baixar da rede primeiro
+  // --- PROTEÇÃO CONTRA ERRO DE IMAGEM (NOVO) ---
+  // Se a url for do Firebase Storage ou Google APIs, o Service Worker NÃO mexe.
+  // Deixa passar direto para a rede. Isso evita o erro de CORS ao desenhar no Canvas.
+  if (url.hostname.includes('firebase') || url.hostname.includes('google') || url.hostname.includes('googleapis')) {
+    return; // Sai da função e deixa o navegador cuidar normalmente
+  }
+
+  // Estratégia "Network First" para HTML (Admin, Entrada, Catalogo)
+  // Tenta baixar a versão mais nova. Se falhar (offline), usa o cache.
   if (req.mode === 'navigate' || url.pathname.endsWith('.html')) {
     event.respondWith(
       fetch(req)
@@ -63,7 +70,8 @@ self.addEventListener('fetch', (event) => {
         })
     );
   } else {
-    // Para imagens, JS, CSS, fontes: Cache primeiro, depois rede
+    // Estratégia "Cache First" para imagens locais, JS, CSS, fontes
+    // Tenta pegar do cache primeiro para ser rápido. Se não tiver, baixa.
     event.respondWith(
       caches.match(req).then((response) => {
         return response || fetch(req);
