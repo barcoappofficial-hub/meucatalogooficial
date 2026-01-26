@@ -175,7 +175,7 @@
                 <i class='bx bx-copy'></i> Copiar Link
             </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 11.0 Fix</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 11.0 Proxy</div>
     </div>
 
     <nav class="bottom-nav">
@@ -255,33 +255,12 @@
     
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
-        
-        if (!data) {
-            alert("Erro: Loja não encontrada.");
-            window.location.href = "index.html";
-            return;
-        }
+        if (!data) { alert("Erro: Loja não encontrada."); window.location.href = "index.html"; return; }
 
         if (data.status === "pendente") {
             const MEU_PIX = "6485220a-c85c-4a83-a2b3-e3e230827e8c";
             const MEU_ZAP = "5597984431811"; 
-            document.body.innerHTML = `
-                <div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center; padding:20px; background: linear-gradient(135deg, #0f172a 0%, #000000 100%);">
-                    <i class='bx bxs-lock-alt' style="font-size: 4rem; color: #fbbf24; margin-bottom: 20px;"></i>
-                    <h1 style="margin:0; font-size:1.8rem;">Ativar Loja</h1>
-                    <p style="color:#94a3b8; margin-bottom: 30px;">Aguardando pagamento para liberação.</p>
-                    <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px dashed #fbbf24; width: 100%; max-width: 350px; margin-bottom: 20px;">
-                        <p style="margin:0 0 10px 0; font-size: 0.9rem; color: #cbd5e1;">Chave Pix (Copia e Cola):</p>
-                        <div style="background: #0f172a; padding: 10px; border-radius: 8px; word-break: break-all; font-family: monospace; color: #fbbf24; margin-bottom: 10px; user-select: all; font-size:0.9rem;">${MEU_PIX}</div>
-                        <button onclick="copiarPix()" class="btn" style="background: #fbbf24; color: black; font-weight:bold; width:100%; border:none; padding:12px; border-radius:8px; cursor:pointer;"><i class='bx bx-copy'></i> COPIAR PIX</button>
-                    </div>
-                    <button onclick="enviarComprovante()" class="btn" style="background: #25D366; color: white; margin-bottom: 30px; max-width: 350px; width:100%; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;"><i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> SOLICITAR CÓDIGO </button>
-                    <div style="width: 100%; max-width: 350px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
-                        <p style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Insira seu código de ativação:</p>
-                        <input type="text" id="inputCodigo" placeholder="Ex: K9X2" style="padding:15px; border-radius:10px; width:100%; text-align:center; margin-bottom:10px; border: 1px solid #334155; background: rgba(0,0,0,0.3); color: #facc15; outline: none; font-size: 1.5rem; text-transform:uppercase; letter-spacing: 5px; font-weight:bold;">
-                        <button onclick="ativarLoja()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">LIBERAR ACESSO</button>
-                    </div>
-                </div>`;
+            document.body.innerHTML = `<div style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; text-align:center; padding:20px; background: linear-gradient(135deg, #0f172a 0%, #000000 100%);"><i class='bx bxs-lock-alt' style="font-size: 4rem; color: #fbbf24; margin-bottom: 20px;"></i><h1 style="margin:0; font-size:1.8rem;">Ativar Loja</h1><p style="color:#94a3b8; margin-bottom: 30px;">Aguardando pagamento para liberação.</p><div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border: 1px dashed #fbbf24; width: 100%; max-width: 350px; margin-bottom: 20px;"><p style="margin:0 0 10px 0; font-size: 0.9rem; color: #cbd5e1;">Chave Pix (Copia e Cola):</p><div style="background: #0f172a; padding: 10px; border-radius: 8px; word-break: break-all; font-family: monospace; color: #fbbf24; margin-bottom: 10px; user-select: all; font-size:0.9rem;">${MEU_PIX}</div><button onclick="copiarPix()" class="btn" style="background: #fbbf24; color: black; font-weight:bold; width:100%; border:none; padding:12px; border-radius:8px; cursor:pointer;"><i class='bx bx-copy'></i> COPIAR PIX</button></div><button onclick="enviarComprovante()" class="btn" style="background: #25D366; color: white; margin-bottom: 30px; max-width: 350px; width:100%; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;"><i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> SOLICITAR CÓDIGO </button><div style="width: 100%; max-width: 350px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;"><p style="font-size: 0.9rem; color: #fff; margin-bottom: 10px;">Insira seu código de ativação:</p><input type="text" id="inputCodigo" placeholder="Ex: K9X2" style="padding:15px; border-radius:10px; width:100%; text-align:center; margin-bottom:10px; border: 1px solid #334155; background: rgba(0,0,0,0.3); color: #facc15; outline: none; font-size: 1.5rem; text-transform:uppercase; letter-spacing: 5px; font-weight:bold;"><button onclick="ativarLoja()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">LIBERAR ACESSO</button></div></div>`;
             window.copiarPix = () => { navigator.clipboard.writeText(MEU_PIX); alert("Chave Pix copiada!"); }
             window.enviarComprovante = () => { const msg = `Olá! Desejo Solicitar o Código de Ativação da Minha Loja *${data.nome || LOJA_ID}*. Aguardo meu código.`; window.open(`https://wa.me/${MEU_ZAP}?text=${encodeURIComponent(msg)}`, '_blank'); }
             window.ativarLoja = async () => { const input = document.getElementById('inputCodigo'); if(input.value.trim().toUpperCase() == data.codigo_secreto) { const hoje = new Date(); hoje.setDate(hoje.getDate() + (data.plano_escolhido === 'anual' ? 365 : 30)); await set(configRef, { ...data, status: "ativo", validade: hoje.toISOString() }); alert("✅ Sucesso! Bem-vindo ao sistema."); window.location.reload(); } else { alert("❌ Código inválido! Verifique no seu WhatsApp."); } }
@@ -325,11 +304,10 @@
         const div = document.getElementById('lista'); div.innerHTML = "";
         const data = snapshot.val();
         if(data) {
-            window.PRODUTOS_CACHE = data; // SALVA NO CACHE GLOBAL
+            window.PRODUTOS_CACHE = data; 
             const chaves = Object.keys(data); TOTAL_PRODUTOS = chaves.length; 
             chaves.reverse().forEach(key => { 
                 const p = data[key]; 
-                // AQUI: Usamos apenas o ID no botão, sem passar links complexos
                 div.innerHTML += `
                 <div class="product-item">
                     <img src="${p.img}">
@@ -376,16 +354,19 @@
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
 
     // ==========================================
-    // 🎨 MÁQUINA DE MARKETING (BLOB COM FALLBACK SEGURO)
+    // 🎨 MÁQUINA DE MARKETING COM PROXY (O Segredo)
     // ==========================================
     window.abrirGerador = async (id) => {
-        // Recupera dados do Cache Global (Segurança contra erro de string)
         const p = window.PRODUTOS_CACHE[id];
         if(!p) return alert("Erro ao carregar produto.");
         
         const nome = p.nome;
         const preco = p.preco;
-        const imgUrl = p.img;
+        
+        // --- AQUI ESTÁ A CORREÇÃO MÁGICA ---
+        // Usamos um proxy (weserv.nl) que adiciona a permissão CORS na imagem.
+        // Assim o navegador deixa o Canvas ler a foto sem bloquear.
+        const imgUrl = `https://images.weserv.nl/?url=${encodeURIComponent(p.img)}&n=-1`;
 
         const modal = document.getElementById('modalMkt');
         const canvas = document.getElementById('canvasMkt');
@@ -393,7 +374,6 @@
         
         modal.style.display = "flex";
 
-        // Fundo
         const grad = ctx.createLinearGradient(0, 0, 0, 1920);
         grad.addColorStop(0, '#0f172a');
         grad.addColorStop(1, '#334155');
@@ -403,7 +383,7 @@
         ctx.fillStyle = "rgba(255,255,255,0.2)";
         ctx.font = "40px Inter";
         ctx.textAlign = "center";
-        ctx.fillText("Gerando...", 540, 960);
+        ctx.fillText("Baixando...", 540, 960);
 
         const desenharCard = (imgSource, imagemValida) => {
             ctx.fillStyle = grad;
@@ -475,25 +455,11 @@
             ctx.fillText("PEÇA PELO LINK NA BIO 📲", 540, 1815);
         };
 
-        // Tenta baixar via fetch (Bypass Cache SW)
-        try {
-            const response = await fetch(imgUrl, { method: 'GET', cache: 'no-store' });
-            if (!response.ok) throw new Error('Falha no fetch');
-            const blob = await response.blob();
-            const localUrl = URL.createObjectURL(blob);
-            
-            const img = new Image();
-            img.onload = () => { desenharCard(img, true); URL.revokeObjectURL(localUrl); };
-            img.onerror = () => desenharCard(null, false);
-            img.src = localUrl;
-        } catch (e) {
-            console.error("Tentando método padrão...");
-            const imgBackup = new Image();
-            imgBackup.crossOrigin = "anonymous";
-            imgBackup.onload = () => desenharCard(imgBackup, true);
-            imgBackup.onerror = () => desenharCard(null, false);
-            imgBackup.src = imgUrl;
-        }
+        const img = new Image();
+        img.crossOrigin = "anonymous"; 
+        img.onload = () => desenharCard(img, true);
+        img.onerror = () => desenharCard(null, false);
+        img.src = imgUrl; // Carrega a url do Proxy
     }
 
     window.fecharMkt = () => { document.getElementById('modalMkt').style.display = "none"; }
