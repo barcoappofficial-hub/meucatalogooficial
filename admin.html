@@ -26,8 +26,9 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); margin-bottom: 20px; }
         h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        input, select { width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px; font-size: 0.95rem; background: var(--input-bg); color: white; outline: none; margin-top: 5px; margin-bottom: 15px; transition: 0.3s; }
-        input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px; font-size: 0.95rem; background: var(--input-bg); color: white; outline: none; margin-top: 5px; margin-bottom: 15px; transition: 0.3s; font-family: 'Inter', sans-serif; }
+        input:focus, textarea:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
+        textarea { min-height: 100px; resize: vertical; }
         label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
         .btn { width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; transition: all 0.2s ease; text-decoration: none; border: 2px solid transparent; }
         .btn:active { transform: scale(0.98); opacity: 0.9; } 
@@ -62,12 +63,24 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; }
         .modal-content { background: var(--glass-bg); padding: 20px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--glass-border); }
         canvas { width: 100%; height: auto; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        /* MODAL COMPARTILHAR WHATSAPP */
+        .modal-whatsapp { max-height: 80vh; overflow-y: auto; }
+        .whatsapp-option { background: rgba(37, 211, 102, 0.1); border: 2px solid rgba(37, 211, 102, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
+        .whatsapp-option:hover { background: rgba(37, 211, 102, 0.2); border-color: #25D366; }
+        .whatsapp-option h4 { margin: 0 0 8px 0; color: white; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .whatsapp-option p { margin: 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
+        .preview-text { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.8rem; color: #cbd5e1; text-align: left; white-space: pre-wrap; border-left: 3px solid var(--primary); }
+        
+        .personalize-section { background: rgba(59, 130, 246, 0.1); border: 2px dashed var(--primary); border-radius: 12px; padding: 15px; margin-top: 15px; }
+        .personalize-section h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div id="toast" class="toast"><i class='bx bx-check-circle'></i> <span>Salvo com sucesso!</span></div>
 
+    <!-- MODAL MARKETING -->
     <div id="modalMkt" class="modal-overlay">
         <div class="modal-content">
             <h3 style="margin-top:0; color:white;">Postar no Status 📸</h3>
@@ -77,6 +90,33 @@
                 <i class='bx bxl-whatsapp'></i> Compartilhar Imagem
             </button>
             <button onclick="fecharMkt()" class="btn btn-outline" style="border-color: #64748b; color: #cbd5e1;">Fechar</button>
+        </div>
+    </div>
+
+    <!-- MODAL COMPARTILHAR WHATSAPP PROFISSIONAL -->
+    <div id="modalWhatsApp" class="modal-overlay">
+        <div class="modal-content modal-whatsapp">
+            <h3 style="margin-top:0; color:white; display: flex; align-items: center; gap: 10px;">
+                <i class='bx bxl-whatsapp' style="color: #25D366;"></i>
+                Compartilhar Catálogo
+            </h3>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">
+                Escolha o estilo de mensagem que mais combina com você:
+            </p>
+            
+            <div id="whatsappOptions"></div>
+            
+            <div class="personalize-section">
+                <h4>✏️ Personalize sua mensagem</h4>
+                <textarea id="customMessage" placeholder="Digite sua mensagem personalizada aqui..." style="margin-bottom: 10px;"></textarea>
+                <button onclick="enviarPersonalizado()" class="btn btn-zap-share" style="width: 100%;">
+                    <i class='bx bxl-whatsapp'></i> Enviar Personalizado
+                </button>
+            </div>
+            
+            <button onclick="fecharWhatsApp()" class="btn btn-outline" style="border-color: #64748b; color: #cbd5e1; margin-top: 15px;">
+                Fechar
+            </button>
         </div>
     </div>
 
@@ -98,10 +138,12 @@
             <p style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin: 0;">Pessoas que acessaram seu catálogo</p>
         </div>
         <div class="card">
-            <h2>Dicas</h2>
-            <ul style="padding-left: 20px; color: var(--text-muted); font-size: 0.9rem;">
-                <li>Divulgue o link no Instagram Bio.</li>
-                <li>Use o botão roxo nos produtos para criar posts de Status.</li>
+            <h2>💡 Dicas para Vender Mais</h2>
+            <ul style="padding-left: 20px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
+                <li><strong style="color:white;">Use mensagens naturais</strong> - Evite textos muito promocionais</li>
+                <li><strong style="color:white;">Personalize</strong> - Adicione seu toque pessoal nas mensagens</li>
+                <li><strong style="color:white;">Stories diários</strong> - Use o botão roxo para criar posts automáticos</li>
+                <li><strong style="color:white;">Bio do Instagram</strong> - Coloque o link do catálogo lá</li>
             </ul>
         </div>
     </div>
@@ -166,16 +208,16 @@
             <button id="btnInstall" class="btn">📲 Instalar Aplicativo</button>
             <i class='bx bx-store' style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
             <h2>Sua Loja está Online!</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Divulgue sua loja agora mesmo:</p>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Divulgue sua loja de forma profissional:</p>
             
-            <button onclick="compartilharZap()" class="btn btn-zap-share" style="margin-bottom: 12px;">
-                <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> Enviar no WhatsApp
+            <button onclick="abrirWhatsAppModal()" class="btn btn-zap-share" style="margin-bottom: 12px;">
+                <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> Compartilhar no WhatsApp
             </button>
             <button onclick="copiarLink()" class="btn btn-primary">
-                <i class='bx bx-copy'></i> Copiar Link
+                <i class='bx bx-copy'></i> Copiar Link Direto
             </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 11.0 Proxy</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 12.0 Professional</div>
     </div>
 
     <nav class="bottom-nav">
@@ -226,14 +268,143 @@
         }
     }
 
-    function gerarTexto() {
-        const nome = (document.getElementById('confNome').value || "Minha Loja").trim();
-        const link = window.location.href.replace("admin.html", "entrada.html");
-        return `📦 *${nome}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados. Faça seu pedido online!\n\n👇👇👇\n${link}`;
-    }
+    // ==========================================
+    // 🎯 SISTEMA PROFISSIONAL DE MENSAGENS WHATSAPP
+    // ==========================================
+    
+    const MENSAGENS_PROFISSIONAIS = [
+        {
+            titulo: "🌟 Convite Amigável",
+            descricao: "Tom casual e convidativo, perfeito para amigos e conhecidos",
+            texto: (nome, link) => `Oi! 😊
 
-    window.copiarLink = () => { navigator.clipboard.writeText(gerarTexto()); showToast("Copiado!"); }
-    window.compartilharZap = () => { const msg = gerarTexto(); window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank'); }
+Conhece a ${nome}? Estou com um catálogo digital super prático onde você pode ver todos os produtos, preços e fotos atualizadas.
+
+Dá uma olhada: ${link}
+
+Qualquer dúvida é só chamar!`
+        },
+        {
+            titulo: "💼 Profissional e Direto",
+            descricao: "Mensagem objetiva para clientes corporativos",
+            texto: (nome, link) => `Olá!
+
+Apresento o catálogo digital da ${nome}.
+
+📱 Acesse aqui: ${link}
+
+• Produtos atualizados
+• Preços em tempo real
+• Fotos de qualidade
+
+Estou à disposição para atendimento.`
+        },
+        {
+            titulo: "🎁 Promoção Especial",
+            descricao: "Ideal para divulgar ofertas e novidades",
+            texto: (nome, link) => `🔥 NOVIDADES NA ${nome.toUpperCase()}!
+
+Acabamos de atualizar nosso catálogo com produtos incríveis e preços especiais!
+
+👉 Confira agora: ${link}
+
+Não perca as promoções! 🎉`
+        },
+        {
+            titulo: "🏪 Apresentação da Loja",
+            descricao: "Primeira impressão para novos clientes",
+            texto: (nome, link) => `Olá! Seja bem-vindo(a)! 👋
+
+Sou da ${nome} e quero te apresentar nosso catálogo digital.
+
+Aqui você encontra:
+✅ Produtos variados
+✅ Preços atualizados
+✅ Fotos reais
+✅ Atendimento rápido
+
+Conheça: ${link}
+
+Vamos fazer negócio? 😊`
+        },
+        {
+            titulo: "⚡ Rápido e Simples",
+            descricao: "Mensagem curta e direta ao ponto",
+            texto: (nome, link) => `Oi! Veja nossos produtos aqui 👇
+
+${link}
+
+${nome} - Qualidade e bom atendimento!`
+        },
+        {
+            titulo: "🎯 Focado em Soluções",
+            descricao: "Destaca os benefícios para o cliente",
+            texto: (nome, link) => `Precisa de [seu produto]? 
+
+A ${nome} tem a solução perfeita para você!
+
+✨ Variedade de produtos
+✨ Preços justos
+✨ Entrega rápida
+
+Veja tudo aqui: ${link}
+
+Como posso te ajudar hoje?`
+        }
+    ];
+
+    window.abrirWhatsAppModal = () => {
+        const modal = document.getElementById('modalWhatsApp');
+        const optionsDiv = document.getElementById('whatsappOptions');
+        const link = window.location.href.replace("admin.html", "entrada.html");
+        
+        optionsDiv.innerHTML = '';
+        
+        MENSAGENS_PROFISSIONAIS.forEach((msg, index) => {
+            const preview = msg.texto(LOJA_NOME_GLOBAL, link);
+            optionsDiv.innerHTML += `
+                <div class="whatsapp-option" onclick="enviarMensagem(${index})">
+                    <h4>${msg.titulo}</h4>
+                    <p>${msg.descricao}</p>
+                    <div class="preview-text">${preview}</div>
+                </div>
+            `;
+        });
+        
+        modal.style.display = "flex";
+    };
+
+    window.enviarMensagem = (index) => {
+        const link = window.location.href.replace("admin.html", "entrada.html");
+        const mensagem = MENSAGENS_PROFISSIONAIS[index].texto(LOJA_NOME_GLOBAL, link);
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, '_blank');
+        showToast("WhatsApp aberto!");
+    };
+
+    window.enviarPersonalizado = () => {
+        const customMsg = document.getElementById('customMessage').value.trim();
+        const link = window.location.href.replace("admin.html", "entrada.html");
+        
+        if (!customMsg) {
+            alert("Digite uma mensagem personalizada!");
+            return;
+        }
+        
+        const mensagemFinal = `${customMsg}\n\n👉 ${link}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagemFinal)}`, '_blank');
+        showToast("Mensagem enviada!");
+    };
+
+    window.fecharWhatsApp = () => {
+        document.getElementById('modalWhatsApp').style.display = "none";
+        document.getElementById('customMessage').value = "";
+    };
+
+    window.copiarLink = () => { 
+        const link = window.location.href.replace("admin.html", "entrada.html");
+        navigator.clipboard.writeText(link); 
+        showToast("Link copiado!"); 
+    };
 
     async function comprimirArquivo(file) {
         const options = { maxSizeMB: 0.1, maxWidthOrHeight: 600, useWebWorker: true };
@@ -354,7 +525,7 @@
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
 
     // ==========================================
-    // 🎨 MÁQUINA DE MARKETING COM PROXY (O Segredo)
+    // 🎨 MÁQUINA DE MARKETING COM PROXY
     // ==========================================
     window.abrirGerador = async (id) => {
         const p = window.PRODUTOS_CACHE[id];
@@ -362,10 +533,6 @@
         
         const nome = p.nome;
         const preco = p.preco;
-        
-        // --- AQUI ESTÁ A CORREÇÃO MÁGICA ---
-        // Usamos um proxy (weserv.nl) que adiciona a permissão CORS na imagem.
-        // Assim o navegador deixa o Canvas ler a foto sem bloquear.
         const imgUrl = `https://images.weserv.nl/?url=${encodeURIComponent(p.img)}&n=-1`;
 
         const modal = document.getElementById('modalMkt');
@@ -389,13 +556,11 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, 1080, 1920);
 
-            // Nome da Loja
             ctx.fillStyle = "#fff";
             ctx.font = "bold 60px Inter, sans-serif";
             ctx.textAlign = "center";
             ctx.fillText(LOJA_NOME_GLOBAL.toUpperCase(), 540, 150);
 
-            // Foto
             const size = 900;
             const x = (1080 - size) / 2;
             const y = 400;
@@ -459,7 +624,7 @@
         img.crossOrigin = "anonymous"; 
         img.onload = () => desenharCard(img, true);
         img.onerror = () => desenharCard(null, false);
-        img.src = imgUrl; // Carrega a url do Proxy
+        img.src = imgUrl;
     }
 
     window.fecharMkt = () => { document.getElementById('modalMkt').style.display = "none"; }
@@ -468,13 +633,13 @@
         const canvas = document.getElementById('canvasMkt');
         const linkLoja = window.location.href.replace("admin.html", "entrada.html");
         
-        navigator.clipboard.writeText(`Olha essa oferta da ${LOJA_NOME_GLOBAL}!\nPeça aqui: ${linkLoja}`);
-        showToast("Link copiado! Postando...");
+        navigator.clipboard.writeText(`Confira essa oferta! 🔥\n${linkLoja}`);
+        showToast("Link copiado! Compartilhando...");
 
         canvas.toBlob(async (blob) => {
             const file = new File([blob], "oferta.png", { type: "image/png" });
             if (navigator.share) {
-                try { await navigator.share({ files: [file], title: 'Oferta Especial', text: `Olha essa oferta da ${LOJA_NOME_GLOBAL}! Peça aqui: ${linkLoja}` }); } 
+                try { await navigator.share({ files: [file], title: 'Oferta Especial', text: `Confira! ${linkLoja}` }); } 
                 catch (error) { console.log("Erro share", error); }
             } else {
                 const link = document.createElement('a'); link.download = 'oferta-status.png'; link.href = canvas.toDataURL(); link.click();
