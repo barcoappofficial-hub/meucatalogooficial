@@ -30,6 +30,7 @@
             min-height: 100vh;
         }
 
+        /* TELA DE LOGIN */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.98);
@@ -50,6 +51,7 @@
             box-sizing: border-box;
         }
 
+        /* PAINEL */
         .header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 30px; padding-bottom: 20px;
@@ -90,6 +92,7 @@
             background: var(--surface); border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05);
             overflow-x: auto;
+            min-height: 400px;
         }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
         th { text-align: left; padding: 20px; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #334155; }
@@ -103,8 +106,10 @@
         
         .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
         .status-ativo { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-pendente { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .status-pendente { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); animation: pulse 2s infinite; }
         .status-vencido { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
 
         .btn-action {
             width: 35px; height: 35px; border-radius: 8px; border: none;
@@ -124,12 +129,12 @@
             font-family: monospace; font-size: 1rem; color: white; border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* NOVO: Estilo para o Código de Ativação */
         .codigo-ativacao {
             font-family: monospace; font-size: 1.1rem; color: #facc15;
             background: rgba(250, 204, 21, 0.1); padding: 5px 10px; border-radius: 6px;
-            border: 1px dashed #facc15;
+            border: 1px dashed #facc15; cursor: pointer; transition: 0.2s;
         }
+        .codigo-ativacao:hover { background: rgba(250, 204, 21, 0.2); transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -147,7 +152,7 @@
     <div id="painel" style="display:none">
         
         <div class="header">
-            <h1><i class='bx bxs-dashboard'></i> Painel Master <span class="badge-god">V 2.1</span></h1>
+            <h1><i class='bx bxs-dashboard'></i> Painel Master <span class="badge-god">V 2.2</span></h1>
             <button onclick="sair()" style="background:none; border:1px solid #334155; color:white; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
         </div>
 
@@ -164,7 +169,7 @@
             </div>
             <div class="stat-card">
                 <i class='bx bxs-wallet stat-icon' style="color: #10b981;"></i>
-                <div class="stat-label">Receita Mensal Estimada</div>
+                <div class="stat-label">Receita Estimada</div>
                 <div class="stat-value" id="stFat">R$ 0,00</div>
             </div>
             <div class="stat-card">
@@ -190,7 +195,8 @@
                         <th>Status</th>
                         <th>Visitas</th>
                         <th>Vencimento</th>
-                        <th>Cód. Ativação</th> <th>Ações</th>
+                        <th>Cód. Ativação</th> 
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="listaLojas"></tbody>
@@ -199,7 +205,7 @@
     </div>
 
 <script type="module">
-    import { db, ref, onValue, set, remove, get } from './firebase-config.js';
+    import { db, ref, onValue, set, remove, get, update } from './firebase-config.js';
 
     // --- SENHA ---
     window.verificarSenha = () => {
@@ -228,60 +234,88 @@
             }
 
             let total = 0, ativas = 0, pendentes = 0, faturamento = 0, totalVisitasGlobal = 0;
+            let arrayLojas = [];
 
+            // 1. Processa os dados
             Object.entries(dados).forEach(([id, loja]) => {
                 const c = loja.config || {};
                 const m = loja.metricas || {}; 
-                const visitas = m.visitas || 0; 
+                arrayLojas.push({ id, ...c, visitas: m.visitas || 0 });
+            });
 
+            // 2. Ordenação Inteligente: PENDENTES PRIMEIRO, depois por Data
+            arrayLojas.sort((a, b) => {
+                if (a.status === 'pendente' && b.status !== 'pendente') return -1;
+                if (a.status !== 'pendente' && b.status === 'pendente') return 1;
+                return new Date(b.validade) - new Date(a.validade);
+            });
+
+            // 3. Renderiza
+            arrayLojas.forEach(loja => {
                 total++;
-                totalVisitasGlobal += visitas;
-                
-                // Status
-                const validade = c.validade ? new Date(c.validade) : new Date(0);
+                totalVisitasGlobal += loja.visitas;
+
+                // Cálculo de Status e Data
+                const validade = loja.validade ? new Date(loja.validade) : new Date(0);
                 const diasRestantes = Math.ceil((validade - new Date()) / (1000 * 60 * 60 * 24));
                 
                 let statusHTML = "";
-                if (c.status === "pendente") {
-                    statusHTML = `<span class="status-badge status-pendente">Bloqueado</span>`;
+                let isPendente = false;
+
+                if (loja.status === "pendente") {
+                    statusHTML = `<span class="status-badge status-pendente">AGUARDANDO CHAVE</span>`;
                     pendentes++;
+                    isPendente = true;
                 } else if (diasRestantes < 0) {
                     statusHTML = `<span class="status-badge status-vencido">Vencido</span>`;
                     pendentes++;
                 } else {
                     statusHTML = `<span class="status-badge status-ativo">Ativo (${diasRestantes}d)</span>`;
                     ativas++;
-                    faturamento += (c.plano_escolhido === 'anual') ? 249.90 : 59.90;
+                    faturamento += (loja.plano_escolhido === 'anual') ? 249.90 : 59.90;
                 }
+
+                // Configuração do Botão WhatsApp (Inteligente)
+                let msgZap = "";
+                if (isPendente) {
+                    msgZap = `Olá! A chave de ativação da sua loja *${loja.nome}* é: *${loja.codigo_secreto}*`;
+                } else {
+                    msgZap = `Olá ${loja.nome}, tudo bem?`;
+                }
+                const linkZap = `https://wa.me/${loja.zap}?text=${encodeURIComponent(msgZap)}`;
 
                 // Linha da Tabela
                 const row = `
-                    <tr>
+                    <tr style="${isPendente ? 'background:rgba(245, 158, 11, 0.05);' : ''}">
                         <td>
                             <div class="loja-info">
-                                <span class="loja-nome">${c.nome}</span>
-                                <span class="loja-id">ID: ${id}</span>
-                                <span style="font-size:0.7rem; color:#64748b">${c.zap}</span>
+                                <span class="loja-nome">${loja.nome}</span>
+                                <span class="loja-id">ID: ${loja.id}</span>
+                                <span style="font-size:0.7rem; color:#64748b">${loja.zap}</span>
                             </div>
                         </td>
-                        <td><span style="background:#334155; padding:3px 8px; border-radius:4px; font-size:0.75rem;">${c.plano_escolhido || "-"}</span></td>
+                        <td><span style="background:#334155; padding:3px 8px; border-radius:4px; font-size:0.75rem;">${loja.plano_escolhido || "-"}</span></td>
                         <td>${statusHTML}</td>
-                        <td><span class="visitas-badge"><i class='bx bx-show'></i> ${visitas}</span></td>
+                        <td><span class="visitas-badge"><i class='bx bx-show'></i> ${loja.visitas}</span></td>
                         <td style="color:#94a3b8; font-size:0.85rem">${validade.toLocaleDateString('pt-BR')}</td>
                         
-                        <td><span class="codigo-ativacao">${c.codigo_secreto || "---"}</span></td>
+                        <td style="text-align:center;">
+                            <span class="codigo-ativacao" onclick="copiarChave('${loja.codigo_secreto}')" title="Clique para copiar">
+                                ${loja.codigo_secreto || "---"}
+                            </span>
+                        </td>
                         
                         <td>
-                            <button class="btn-action btn-zap" onclick="window.open('https://wa.me/${c.zap}', '_blank')" title="WhatsApp"><i class='bx bxl-whatsapp'></i></button>
-                            <button class="btn-action btn-link" onclick="copiarLink('${id}')" title="Copiar Link Capa"><i class='bx bx-link'></i></button>
-                            <button class="btn-action btn-reset" onclick="zerarVisitas('${id}')" title="Zerar Visitas"><i class='bx bx-reset'></i></button>
-                            <button class="btn-action btn-renovar" onclick="renovar('${id}', 30)" title="Renovar 30 dias"><i class='bx bx-calendar'></i></button>
-                            <button class="btn-action btn-del" onclick="apagarLoja('${id}')" title="Apagar Loja"><i class='bx bx-trash'></i></button>
+                            <button class="btn-action btn-zap" onclick="window.open('${linkZap}', '_blank')" title="Enviar Chave no WhatsApp"><i class='bx bxl-whatsapp'></i></button>
+                            <button class="btn-action btn-link" onclick="copiarLink('${loja.id}')" title="Copiar Link Capa"><i class='bx bx-link'></i></button>
+                            <button class="btn-action btn-reset" onclick="zerarVisitas('${loja.id}')" title="Zerar Visitas"><i class='bx bx-reset'></i></button>
+                            <button class="btn-action btn-renovar" onclick="renovar('${loja.id}', 30)" title="Renovar 30 dias"><i class='bx bx-calendar'></i></button>
+                            <button class="btn-action btn-del" onclick="apagarLoja('${loja.id}')" title="Apagar Loja"><i class='bx bx-trash'></i></button>
                         </td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
-                lojasCache.push({ row, text: (c.nome + id + c.zap).toLowerCase() });
+                lojasCache.push({ row, text: (loja.nome + loja.id + loja.zap).toLowerCase() });
             });
 
             atualizarStats(total, totalVisitasGlobal, pendentes, faturamento);
@@ -300,6 +334,13 @@
         const tbody = document.getElementById('listaLojas');
         tbody.innerHTML = "";
         lojasCache.forEach(item => { if(item.text.includes(termo)) tbody.innerHTML += item.row; });
+    }
+
+    // Copiar Chave ao Clicar
+    window.copiarChave = (chave) => {
+        if(!chave) return;
+        navigator.clipboard.writeText(chave);
+        alert("🔑 Chave copiada: " + chave);
     }
 
     window.copiarLink = (id) => {
@@ -327,7 +368,8 @@
         let baseData = (validadeAtual > hoje) ? validadeAtual : hoje;
         baseData.setDate(baseData.getDate() + dias);
         
-        await set(lojaRef, { ...data, status: "ativo", validade: baseData.toISOString(), plano_escolhido: dias === 365 ? 'anual' : 'mensal' });
+        // Ao renovar, também garante que o status vira ativo
+        await update(lojaRef, { status: "ativo", validade: baseData.toISOString(), plano_escolhido: dias === 365 ? 'anual' : 'mensal' });
     }
 
     window.apagarLoja = async (id) => {
