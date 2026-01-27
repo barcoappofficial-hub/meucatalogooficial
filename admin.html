@@ -26,9 +26,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .card { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 16px; padding: 20px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); margin-bottom: 20px; }
         h2 { font-size: 1.2rem; margin-top: 0; margin-bottom: 15px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        input, select, textarea { width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px; font-size: 0.95rem; background: var(--input-bg); color: white; outline: none; margin-top: 5px; margin-bottom: 15px; transition: 0.3s; font-family: 'Inter', sans-serif; }
-        input:focus, textarea:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
-        textarea { min-height: 100px; resize: vertical; }
+        input, select { width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px; font-size: 0.95rem; background: var(--input-bg); color: white; outline: none; margin-top: 5px; margin-bottom: 15px; transition: 0.3s; font-family: 'Inter', sans-serif; }
+        input:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
         label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
         .btn { width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; transition: all 0.2s ease; text-decoration: none; border: 2px solid transparent; }
         .btn:active { transform: scale(0.98); opacity: 0.9; } 
@@ -49,7 +48,7 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 0.75rem; cursor: pointer; width: 100%; border: none; background: none; }
         .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
         .nav-item.active { color: var(--primary); }
-        .nav-item.active.rocket { color: var(--isca); }
+        .nav-item.active.rocket { color: var(--isca); } /* Cor especial para o foguete */
         
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #22c55e; color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 2000; display: flex; align-items: center; gap: 8px; font-weight: bold; }
         .toast.show { opacity: 1; visibility: visible; top: 30px; }
@@ -62,28 +61,18 @@
         .foto-slot img { width: 100%; height: 100%; object-fit: cover; }
         .foto-slot i { font-size: 1.5rem; color: var(--text-muted); }
 
-        /* MODAL GERAL */
+        /* MODAL MARKETING GERAL (O Antigo) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; justify-content: center; align-items: center; flex-direction: column; padding: 20px; }
         .modal-content { background: var(--glass-bg); padding: 20px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--glass-border); }
         canvas { width: 100%; height: auto; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        /* ESTILOS DA MÁQUINA DE VENDER */
+        /* ESTILOS DA NOVA MÁQUINA DE VENDER */
         .copy-option { text-align: left; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); padding: 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
         .copy-option:hover, .copy-option.selected { border-color: var(--isca); background: rgba(234, 179, 8, 0.1); }
         .copy-tag { font-size: 0.7rem; text-transform: uppercase; font-weight: bold; padding: 2px 8px; border-radius: 4px; margin-bottom: 5px; display: inline-block; }
         .tag-curiosity { background: #8b5cf6; color: white; }
         .tag-direct { background: #ef4444; color: white; }
         .tag-scarcity { background: #f59e0b; color: black; }
-        
-        .modal-whatsapp { max-height: 80vh; overflow-y: auto; }
-        .whatsapp-option { background: rgba(37, 211, 102, 0.1); border: 2px solid rgba(37, 211, 102, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
-        .whatsapp-option:hover { background: rgba(37, 211, 102, 0.2); border-color: #25D366; }
-        .whatsapp-option h4 { margin: 0 0 8px 0; color: white; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-        .whatsapp-option p { margin: 0; color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; }
-        .preview-text { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.8rem; color: #cbd5e1; text-align: left; white-space: pre-wrap; border-left: 3px solid var(--primary); }
-        
-        .personalize-section { background: rgba(59, 130, 246, 0.1); border: 2px dashed var(--primary); border-radius: 12px; padding: 15px; margin-top: 15px; }
-        .personalize-section h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -92,39 +81,13 @@
 
     <div id="modalMkt" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="margin-top:0; color:white;">Postar no Status 📸</h3>
-            <p style="font-size:0.8rem; color:#ccc; margin-bottom:15px;">Imagem gerada automaticamente.</p>
+            <h3 style="margin-top:0; color:white;">Card do Produto 📸</h3>
+            <p style="font-size:0.8rem; color:#ccc; margin-bottom:15px;">Gerado automaticamente.</p>
             <canvas id="canvasMkt" width="1080" height="1920"></canvas>
             <button onclick="compartilharImagem('canvasMkt')" class="btn btn-zap-share" style="margin-bottom:10px;">
                 <i class='bx bxl-whatsapp'></i> Compartilhar Imagem
             </button>
             <button onclick="document.getElementById('modalMkt').style.display = 'none'" class="btn btn-outline" style="border-color: #64748b; color: #cbd5e1;">Fechar</button>
-        </div>
-    </div>
-
-    <div id="modalWhatsApp" class="modal-overlay">
-        <div class="modal-content modal-whatsapp">
-            <h3 style="margin-top:0; color:white; display: flex; align-items: center; gap: 10px;">
-                <i class='bx bxl-whatsapp' style="color: #25D366;"></i>
-                Compartilhar Catálogo
-            </h3>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">
-                Escolha o estilo de mensagem:
-            </p>
-            
-            <div id="whatsappOptions"></div>
-            
-            <div class="personalize-section">
-                <h4>✏️ Personalize sua mensagem</h4>
-                <textarea id="customMessage" placeholder="Digite sua mensagem personalizada aqui..." style="margin-bottom: 10px;"></textarea>
-                <button onclick="enviarPersonalizado()" class="btn btn-zap-share" style="width: 100%;">
-                    <i class='bx bxl-whatsapp'></i> Enviar Personalizado
-                </button>
-            </div>
-            
-            <button onclick="fecharWhatsApp()" class="btn btn-outline" style="border-color: #64748b; color: #cbd5e1; margin-top: 15px;">
-                Fechar
-            </button>
         </div>
     </div>
 
@@ -148,17 +111,8 @@
         
         <div class="card" onclick="mudarAba('maquina', document.getElementById('navMaquina'))" style="border: 2px solid var(--isca); background: rgba(234, 179, 8, 0.1); cursor:pointer;">
             <h2 style="color: var(--isca);">🚀 Máquina de Vender</h2>
-            <p style="color:white; font-size:0.9rem;">Crie ofertas irresistíveis agora e venda pelo WhatsApp.</p>
+            <p style="color:white; font-size:0.9rem;">Crie a <b>ISCA</b> perfeita agora. Selecione um produto e gere ofertas com selo de localização.</p>
             <button class="btn btn-isca">ACESSAR AGORA</button>
-        </div>
-
-        <div class="card">
-            <h2>💡 Dicas para Vender Mais</h2>
-            <ul style="padding-left: 20px; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
-                <li><strong style="color:white;">Use a Isca</strong> - Escolha um produto barato para atrair.</li>
-                <li><strong style="color:white;">Localização</strong> - Clientes confiam em lojas da cidade.</li>
-                <li><strong style="color:white;">Stories diários</strong> - Quem não é visto não é lembrado.</li>
-            </ul>
         </div>
     </div>
 
@@ -191,29 +145,29 @@
     <div id="tab-maquina" class="tab-content">
         <div class="card" style="border: 2px solid var(--isca);">
             <h2 style="color: var(--isca);"><i class='bx bxs-rocket'></i> Método 1: A ISCA</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Escolha um produto para ser o chamariz. Focaremos no PREÇO e na LOCALIZAÇÃO.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Transforme um produto encalhado em uma oferta irresistível com selo da sua cidade.</p>
             
-            <label>1. Escolha o Produto</label>
-            <select id="selectIsca" onchange="atualizarPrecoIsca()">
-                <option value="">Carregando produtos...</option>
+            <label>1. Escolha o Produto (Lista Suspensa)</label>
+            <select id="selectIsca" onchange="atualizarPrecoIsca()" style="border-color: var(--isca);">
+                <option value="">Carregando lista de produtos...</option>
             </select>
             
             <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <div style="flex:1;">
-                    <label>Preço Original</label>
+                    <label>Preço Normal</label>
                     <input type="text" id="precoOriginalIsca" disabled style="opacity: 0.5;">
                 </div>
                 <div style="flex:1;">
-                    <label style="color: var(--isca);">Preço da Isca (Oferta)</label>
-                    <input type="number" id="precoOfertaIsca" placeholder="Ex: 29.90" style="border-color: var(--isca);">
+                    <label style="color: var(--isca);">Preço ISCA (Oferta)</label>
+                    <input type="number" id="precoOfertaIsca" placeholder="Ex: 29.90" style="border-color: var(--isca); color: #facc15; font-weight: bold;">
                 </div>
             </div>
 
-            <label>Cidade da Oferta (Selo de Confiança)</label>
+            <label>Cidade (Selo de Confiança)</label>
             <input type="text" id="cidadeIsca" placeholder="Ex: Tefé">
 
             <button onclick="gerarIsca()" class="btn btn-isca" style="margin-top: 10px;">
-                <i class='bx bx-cog'></i> GERAR ISCA AGORA
+                <i class='bx bx-cog'></i> GERAR ISCA E COPY
             </button>
         </div>
 
@@ -221,14 +175,14 @@
             <div class="card">
                 <h2>📸 Card Gerado</h2>
                 <canvas id="canvasIsca" width="1080" height="1350"></canvas>
-                <p style="font-size: 0.8rem; color: #94a3b8; text-align: center;">(Formato ideal para WhatsApp e Feed)</p>
+                <p style="font-size: 0.8rem; color: #94a3b8; text-align: center;">(Formato Otimizado para WhatsApp)</p>
             </div>
 
             <div class="card">
-                <h2>✍️ Escolha a Legenda</h2>
+                <h2>✍️ Escolha o Texto (Copy)</h2>
                 <div id="listaLegendas"></div>
                 <button onclick="enviarIscaZap()" class="btn btn-zap-share" style="margin-top: 20px;">
-                    <i class='bx bxl-whatsapp'></i> Enviar no WhatsApp
+                    <i class='bx bxl-whatsapp'></i> Postar Agora
                 </button>
             </div>
         </div>
@@ -236,9 +190,7 @@
 
     <div id="tab-loja" class="tab-content">
         <div class="card">
-            <h2>Fotos da Fachada (Carrossel)</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Adicione até 5 fotos para a tela inicial.</p>
-            
+            <h2>Fotos da Fachada</h2>
             <div class="foto-grid">
                 <label class="foto-slot" for="f1"><img id="prev1" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f1" accept="image/*" style="display:none" onchange="preview(this, 'prev1')">
@@ -267,25 +219,24 @@
         <div class="card" style="text-align: center; padding: 40px 20px;">
             <button id="btnInstall" class="btn">📲 Instalar Aplicativo</button>
             <i class='bx bx-store' style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
-            <h2>Sua Loja está Online!</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Divulgue sua loja de forma profissional:</p>
-            
-            <button onclick="abrirWhatsAppModal()" class="btn btn-zap-share" style="margin-bottom: 12px;">
-                <i class='bx bxl-whatsapp' style="font-size: 1.2rem;"></i> Compartilhar no WhatsApp
+            <h2>Loja Online</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Divulgue sua loja:</p>
+            <button onclick="compartilharZap()" class="btn btn-zap-share" style="margin-bottom: 12px;">
+                <i class='bx bxl-whatsapp'></i> Enviar Link Geral
             </button>
             <button onclick="copiarLink()" class="btn btn-primary">
-                <i class='bx bx-copy'></i> Copiar Link Direto
+                <i class='bx bx-copy'></i> Copiar Link
             </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 12.0 Professional</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 12.0 Isca Ativa</div>
     </div>
 
     <nav class="bottom-nav">
         <button class="nav-item" onclick="mudarAba('dashboard', this)"><i class='bx bx-bar-chart-alt-2'></i><span>Visão</span></button>
         <button class="nav-item active" onclick="mudarAba('produtos', this)"><i class='bx bx-package'></i><span>Produtos</span></button>
-        <button class="nav-item" id="navMaquina" onclick="mudarAba('maquina', this)"><i class='bx bxs-rocket'></i><span style="font-weight:bold; color:var(--isca);">Vender</span></button>
+        <button class="nav-item" id="navMaquina" onclick="mudarAba('maquina', this)"><i class='bx bxs-rocket'></i><span style="color: var(--isca); font-weight: bold;">Vender</span></button>
         <button class="nav-item" onclick="mudarAba('loja', this)"><i class='bx bx-store-alt'></i><span>Loja</span></button>
-        <button class="nav-item" onclick="mudarAba('perfil', this)"><i class='bx bx-share-alt'></i><span>Share</span></button>
+        <button class="nav-item" onclick="mudarAba('perfil', this)"><i class='bx bx-share-alt'></i><span>Perfil</span></button>
     </nav>
 
 <script type="module">
@@ -298,7 +249,6 @@
     let LOJA_NOME_GLOBAL = "";
     let LOJA_CIDADE_GLOBAL = "";
     
-    // CACHE GLOBAL DE PRODUTOS
     window.PRODUTOS_CACHE = {};
     window.LEGENDA_SELECIONADA = "";
 
@@ -319,6 +269,7 @@
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if(btn) btn.classList.add('active');
         
+        // Se abrir a aba maquina, carrega a lista suspensa
         if (abaId === 'maquina') {
             carregarSelectIsca();
         }
@@ -335,54 +286,29 @@
         }
     }
 
-    // ==========================================
-    // 🎯 SISTEMA DE WHATSAPP PROFISSIONAL
-    // ==========================================
-    const MENSAGENS_PROFISSIONAIS = [
-        { titulo: "🌟 Convite Amigável", descricao: "Para amigos e conhecidos", texto: (nome, link) => `Oi! 😊\n\nConhece a ${nome}? Estou com um catálogo digital super prático onde você pode ver todos os produtos, preços e fotos atualizadas.\n\nDá uma olhada: ${link}\n\nQualquer dúvida é só chamar!` },
-        { titulo: "💼 Profissional", descricao: "Objetivo para clientes", texto: (nome, link) => `Olá!\n\nApresento o catálogo digital da ${nome}.\n\n📱 Acesse aqui: ${link}\n\n• Produtos atualizados\n• Preços em tempo real\n• Fotos de qualidade\n\nEstou à disposição.` },
-        { titulo: "🎁 Promoção", descricao: "Divulgar ofertas", texto: (nome, link) => `🔥 NOVIDADES NA ${nome.toUpperCase()}!\n\nAcabamos de atualizar nosso catálogo com produtos incríveis e preços especiais!\n\n👉 Confira agora: ${link}\n\nNão perca as promoções! 🎉` }
-    ];
-
-    window.abrirWhatsAppModal = () => {
-        const modal = document.getElementById('modalWhatsApp');
-        const optionsDiv = document.getElementById('whatsappOptions');
+    // Função de Texto Simples (Aba Perfil)
+    function gerarTexto() {
+        const nome = (document.getElementById('confNome').value || "Minha Loja").trim();
         const link = window.location.href.replace("admin.html", "entrada.html");
-        
-        optionsDiv.innerHTML = '';
-        MENSAGENS_PROFISSIONAIS.forEach((msg, index) => {
-            const preview = msg.texto(LOJA_NOME_GLOBAL, link);
-            optionsDiv.innerHTML += `<div class="whatsapp-option" onclick="enviarMensagem(${index})"><h4>${msg.titulo}</h4><p>${msg.descricao}</p><div class="preview-text">${preview}</div></div>`;
-        });
-        modal.style.display = "flex";
-    };
+        return `📦 *${nome}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos, fotos e preços atualizados.\n\n👇👇👇\n${link}`;
+    }
+    window.copiarLink = () => { navigator.clipboard.writeText(gerarTexto()); showToast("Copiado!"); }
+    window.compartilharZap = () => { const msg = gerarTexto(); window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank'); }
 
-    window.enviarMensagem = (index) => {
-        const link = window.location.href.replace("admin.html", "entrada.html");
-        const mensagem = MENSAGENS_PROFISSIONAIS[index].texto(LOJA_NOME_GLOBAL, link);
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`, '_blank');
-        showToast("WhatsApp aberto!");
-    };
+    // ==========================================
+    // 🚀 LÓGICA DA MÁQUINA DE VENDER (ISCA)
+    // ==========================================
     
-    window.enviarPersonalizado = () => {
-        const customMsg = document.getElementById('customMessage').value.trim();
-        const link = window.location.href.replace("admin.html", "entrada.html");
-        if (!customMsg) { alert("Digite uma mensagem!"); return; }
-        const mensagemFinal = `${customMsg}\n\n👉 ${link}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagemFinal)}`, '_blank');
-        showToast("Enviado!");
-    };
-    
-    window.fecharWhatsApp = () => { document.getElementById('modalWhatsApp').style.display = "none"; };
-    window.copiarLink = () => { const link = window.location.href.replace("admin.html", "entrada.html"); navigator.clipboard.writeText(link); showToast("Link copiado!"); };
-
-    // ==========================================
-    // 🚀 MÁQUINA DE VENDER - LÓGICA
-    // ==========================================
     window.carregarSelectIsca = () => {
         const select = document.getElementById('selectIsca');
         select.innerHTML = '<option value="">Selecione um produto...</option>';
         const chaves = Object.keys(window.PRODUTOS_CACHE);
+        
+        if (chaves.length === 0) {
+            select.innerHTML = '<option value="">Nenhum produto cadastrado</option>';
+            return;
+        }
+
         chaves.forEach(key => {
             const p = window.PRODUTOS_CACHE[key];
             const option = document.createElement('option');
@@ -391,17 +317,10 @@
             select.appendChild(option);
         });
         
-        // Tentar adivinhar a cidade pelo endereço se não estiver setada
+        // Tenta preencher a cidade automaticamente se estiver vazia
         const cidadeInput = document.getElementById('cidadeIsca');
         if (!cidadeInput.value && LOJA_CIDADE_GLOBAL) {
             cidadeInput.value = LOJA_CIDADE_GLOBAL;
-        } else if (!cidadeInput.value) {
-            // Tenta extrair do endereço completo
-            const end = document.getElementById('confEnd').value;
-            if(end.includes('-')) {
-                const parts = end.split('-');
-                if(parts.length > 1) cidadeInput.value = parts[1].trim(); 
-            }
         }
     }
 
@@ -417,24 +336,25 @@
         const oferta = document.getElementById('precoOfertaIsca').value;
         const cidade = document.getElementById('cidadeIsca').value || "Loja";
 
-        if(!id || !oferta) return alert("Selecione um produto e defina o preço da oferta!");
+        if(!id || !oferta) return alert("Por favor, selecione um produto e defina o preço da oferta!");
 
         const p = window.PRODUTOS_CACHE[id];
         const canvas = document.getElementById('canvasIsca');
         const ctx = canvas.getContext('2d');
+        // PROXY WESERV PARA EVITAR CORS
         const imgUrl = `https://images.weserv.nl/?url=${encodeURIComponent(p.img)}&n=-1`;
 
         document.getElementById('previewIscaArea').style.display = "block";
-        window.location.href = "#previewIscaArea"; // Scroll
+        window.location.href = "#previewIscaArea";
 
-        // DESENHAR O CARD DA ISCA
+        // DESENHAR O CARD
         const grad = ctx.createLinearGradient(0, 0, 0, 1350);
-        grad.addColorStop(0, '#0f172a');
-        grad.addColorStop(1, '#000000');
+        grad.addColorStop(0, '#ef4444'); // Vermelho alerta
+        grad.addColorStop(1, '#7f1d1d');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 1080, 1350);
 
-        // Header Localização (AMARELO ALERTA)
+        // Header Amarelo com Localização
         ctx.fillStyle = "#facc15";
         ctx.fillRect(0, 0, 1080, 150);
         
@@ -442,9 +362,9 @@
         ctx.font = "bold 50px Inter";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(`📍 OFERTA DISPONÍVEL EM ${cidade.toUpperCase()}`, 540, 75);
+        ctx.fillText(`📍 OFERTA RELÂMPAGO EM ${cidade.toUpperCase()}`, 540, 75);
 
-        // Imagem
+        // Imagem do Produto
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.src = imgUrl;
@@ -452,14 +372,15 @@
         img.onload = () => {
             const size = 700;
             const x = (1080 - size) / 2;
-            const y = 250;
+            const y = 230;
             
-            // Desenhar Imagem com Borda
+            // Borda branca na foto
             ctx.save();
             ctx.beginPath();
             ctx.roundRect(x, y, size, size, 30);
             ctx.clip();
-            // Ajuste de aspect ratio
+            
+            // Ajuste de aspect ratio (cover)
             let sx, sy, sw, sh;
             if (img.width > img.height) { sh = img.height; sw = img.height; sx = (img.width - img.height) / 2; sy = 0; } 
             else { sw = img.width; sh = img.width; sy = (img.height - img.width) / 2; sx = 0; }
@@ -467,46 +388,44 @@
             ctx.restore();
             
             ctx.strokeStyle = "white";
-            ctx.lineWidth = 10;
+            ctx.lineWidth = 15;
             ctx.strokeRect(x, y, size, size);
 
-            // TÍTULO
+            // Nome do Produto
             ctx.fillStyle = "white";
             ctx.font = "bold 60px Inter";
             ctx.textAlign = "center";
             ctx.textBaseline = "alphabetic";
             let nomeAjustado = p.nome;
             if(nomeAjustado.length > 25) nomeAjustado = nomeAjustado.substring(0,25) + "...";
-            ctx.fillText(nomeAjustado, 540, 1050);
+            ctx.fillText(nomeAjustado, 540, 1030);
 
-            // PREÇOS
-            // "DE" Riscado
+            // PREÇO "DE" RISCADO
             ctx.font = "40px Inter";
-            ctx.fillStyle = "#94a3b8";
+            ctx.fillStyle = "#fca5a5"; // Vermelho claro
             const textoDe = `De R$ ${parseFloat(p.preco).toFixed(2).replace('.', ',')}`;
-            ctx.fillText(textoDe, 540, 1120);
-            // Risco
+            ctx.fillText(textoDe, 540, 1100);
             const widthDe = ctx.measureText(textoDe).width;
-            ctx.strokeStyle = "#ef4444";
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 4;
             ctx.beginPath();
-            ctx.moveTo(540 - widthDe/2, 1110);
-            ctx.lineTo(540 + widthDe/2, 1110);
+            ctx.moveTo(540 - widthDe/2, 1090);
+            ctx.lineTo(540 + widthDe/2, 1090);
             ctx.stroke();
 
-            // "POR" Gigante
-            ctx.font = "bold 120px Inter";
-            ctx.fillStyle = "#facc15"; // Amarelo
+            // PREÇO "POR" GIGANTE (AMARELO)
+            ctx.font = "bold 130px Inter";
+            ctx.fillStyle = "#facc15"; 
             const textoPor = `Por R$ ${parseFloat(oferta).toFixed(2).replace('.', ',')}`;
-            ctx.fillText(textoPor, 540, 1250);
+            ctx.fillText(textoPor, 540, 1230);
             
             // Call to Action
             ctx.font = "30px Inter";
             ctx.fillStyle = "white";
-            ctx.fillText("👇 CLIQUE NO LINK DA LEGENDA 👇", 540, 1320);
+            ctx.fillText("👇 CLIQUE NO LINK DA LEGENDA 👇", 540, 1310);
         };
 
-        // GERAR LEGENDAS COPYWRITING
+        // COPYWRITING
         const linkProd = window.location.href.replace("admin.html", "entrada.html") + `?id=${LOJA_ID}&produto=${id}`;
         
         const copys = [
@@ -520,7 +439,7 @@
             },
             {
                 tag: "ESCASSEZ", classe: "tag-scarcity",
-                texto: `📍 ${cidade.toUpperCase()}\n\nRestam apenas 3 unidades no estoque com esse preço antigo.\nQuem clicar primeiro leva! 🏃‍♂️💨\n\nVeja aqui:\n👉 ${linkProd}`
+                texto: `📍 ATENÇÃO ${cidade.toUpperCase()}\n\nRestam apenas 3 unidades no estoque com esse preço antigo.\nQuem clicar primeiro leva! 🏃‍♂️💨\n\nVeja aqui:\n👉 ${linkProd}`
             }
         ];
 
@@ -531,9 +450,7 @@
             const el = document.createElement('div');
             el.className = "copy-option";
             if (index === 0) { el.classList.add('selected'); window.LEGENDA_SELECIONADA = c.texto; }
-            
             el.innerHTML = `<span class="copy-tag ${c.classe}">${c.tag}</span><div style="font-size:0.85rem; color:#cbd5e1; white-space: pre-wrap;">${c.texto}</div>`;
-            
             el.onclick = () => {
                 document.querySelectorAll('.copy-option').forEach(x => x.classList.remove('selected'));
                 el.classList.add('selected');
@@ -545,32 +462,25 @@
 
     window.enviarIscaZap = () => {
         const canvas = document.getElementById('canvasIsca');
-        
         canvas.toBlob(async (blob) => {
             const file = new File([blob], "oferta.png", { type: "image/png" });
             const texto = window.LEGENDA_SELECIONADA;
 
-            // Tenta usar API de compartilhamento nativa (Mobile)
             if (navigator.share) {
                 try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Oferta',
-                        text: texto
-                    });
+                    // Tenta compartilhar Imagem + Texto direto
+                    await navigator.share({ files: [file], title: 'Oferta', text: texto });
                     showToast("Compartilhado!");
                 } catch (err) {
-                    console.log("Erro Share API", err);
-                    // Fallback se falhar ou cancelar
+                    // Fallback se o navegador nao suportar imagem+texto junto
                     navigator.clipboard.writeText(texto);
-                    alert("Imagem não suportada diretamente.\n1. O texto foi copiado.\n2. Baixe a imagem e cole no WhatsApp.");
+                    alert("O texto foi copiado!\nA imagem será baixada.\nCole no WhatsApp.");
                     const link = document.createElement('a'); link.download = 'oferta.png'; link.href = canvas.toDataURL(); link.click();
                 }
             } else {
-                // PC Desktop
                 navigator.clipboard.writeText(texto);
                 const link = document.createElement('a'); link.download = 'oferta.png'; link.href = canvas.toDataURL(); link.click();
-                alert("1. Texto Copiado!\n2. A imagem foi baixada.\n3. Agora cole tudo no WhatsApp.");
+                alert("1. Texto Copiado!\n2. Imagem Baixada.\n3. Cole no WhatsApp.");
             }
         });
     }
@@ -612,7 +522,13 @@
 
         PLANO_ATUAL = data.plano_escolhido || "mensal";
         LOJA_NOME_GLOBAL = data.nome || "Minha Loja";
-        LOJA_CIDADE_GLOBAL = data.endereco ? data.endereco.split('-').pop().trim() : ""; // Tenta pegar a cidade
+        
+        // Tenta extrair a cidade do endereço salvo
+        if(data.endereco) {
+            const parts = data.endereco.split('-');
+            if(parts.length > 1) LOJA_CIDADE_GLOBAL = parts[parts.length-1].trim();
+            else LOJA_CIDADE_GLOBAL = data.endereco;
+        }
 
         if (!document.getElementById('confNome')) { window.location.reload(); return; }
 
@@ -658,8 +574,8 @@
                         <strong>${p.nome}</strong>
                         <span>R$ ${p.preco}</span>
                     </div>
-                    <button class="btn-mkt" onclick="abrirGeradorPadrao('${key}')" title="Post Simples">
-                        <i class='bx bxs-camera'></i>
+                    <button class="btn-mkt" onclick="abrirGerador('${key}')" title="Criar Post Simples">
+                        <i class='bx bxs-megaphone'></i>
                     </button>
                     <button class="btn-del" onclick="deletar('${key}')">
                         <i class='bx bx-trash'></i>
@@ -696,34 +612,45 @@
     }
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
 
-    // GERADOR PADRÃO (Antigo)
-    window.abrirGeradorPadrao = (id) => {
+    // ==========================================
+    // 🎨 GERADOR DE CARD SIMPLES (MANTIDO)
+    // ==========================================
+    window.abrirGerador = async (id) => {
         const p = window.PRODUTOS_CACHE[id];
+        if(!p) return alert("Erro ao carregar produto.");
+        
         const modal = document.getElementById('modalMkt');
         const canvas = document.getElementById('canvasMkt');
         const ctx = canvas.getContext('2d');
         const imgUrl = `https://images.weserv.nl/?url=${encodeURIComponent(p.img)}&n=-1`;
+
         modal.style.display = "flex";
-        
-        // Fundo
+
         const grad = ctx.createLinearGradient(0, 0, 0, 1920);
         grad.addColorStop(0, '#0f172a'); grad.addColorStop(1, '#334155');
         ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1920);
-        
-        // Imagem
+        ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.font = "40px Inter"; ctx.textAlign = "center"; ctx.fillText("Gerando...", 540, 960);
+
         const img = new Image(); img.crossOrigin = "anonymous"; img.src = imgUrl;
         img.onload = () => {
-             const size = 900; const x = (1080 - size) / 2; const y = 400;
-             ctx.drawImage(img, x, y, size, size); // Simplificado
-             ctx.fillStyle = "white"; ctx.font = "bold 90px Inter"; ctx.textAlign = "center";
-             ctx.fillText(p.nome, 540, 1450);
-             ctx.fillStyle = "#facc15"; ctx.font = "bold 130px Inter";
-             ctx.fillText(`R$ ${parseFloat(p.preco).toFixed(2).replace('.', ',')}`, 540, 1600);
-        }
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1920);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 60px Inter"; ctx.textAlign = "center"; ctx.fillText(LOJA_NOME_GLOBAL.toUpperCase(), 540, 150);
+            
+            const size = 900; const x = (1080 - size) / 2; const y = 400;
+            // Foto redonda/quadrada
+            ctx.save(); ctx.beginPath(); ctx.roundRect(x, y, size, size, 40); ctx.clip();
+            let sx, sy, sw, sh; if (img.width > img.height) { sh = img.height; sw = img.height; sx = (img.width - img.height) / 2; sy = 0; } else { sw = img.width; sh = img.width; sy = (img.height - img.width) / 2; sx = 0; }
+            ctx.drawImage(img, sx, sy, sw, sh, x, y, size, size); ctx.restore();
+            
+            ctx.strokeStyle = "white"; ctx.lineWidth = 20; ctx.strokeRect(x, y, size, size);
+            ctx.font = "bold 90px Inter"; ctx.fillStyle = "white"; ctx.fillText(p.nome, 540, 1450);
+            ctx.fillStyle = "#facc15"; ctx.beginPath(); ctx.roundRect(340, 1520, 400, 180, 20); ctx.fill();
+            ctx.fillStyle = "black"; ctx.font = "bold 100px Inter"; ctx.fillText(`R$ ${parseFloat(p.preco).toFixed(2).replace('.', ',')}`, 540, 1640);
+        };
     }
-    
+    window.fecharMkt = () => { document.getElementById('modalMkt').style.display = "none"; }
     window.compartilharImagem = (canvasId) => {
-        const canvas = document.getElementById(canvasId);
+        const canvas = document.getElementById(canvasId || 'canvasMkt');
         canvas.toBlob(async (blob) => {
             const file = new File([blob], "share.png", { type: "image/png" });
             if(navigator.share) { try { await navigator.share({ files: [file] }); } catch(e){} }
