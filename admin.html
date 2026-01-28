@@ -263,7 +263,7 @@
 
     const params = new URLSearchParams(window.location.search);
     let LOJA_ID = params.get('id');
-    let PLANO_ATUAL = "mensal"; 
+    let PLANO_ATUAL = "basico"; // PADRÃO INICIAL
     let TOTAL_PRODUTOS = 0;
     let LOJA_NOME_GLOBAL = "";
     let CIDADE_GLOBAL = "";
@@ -282,7 +282,6 @@
     if ('serviceWorker' in navigator) { 
         window.addEventListener('load', () => { 
             navigator.serviceWorker.register('./sw.js').then(reg => {
-                // Força atualização do SW se houver nova versão
                 reg.update();
             }); 
         }); 
@@ -336,10 +335,7 @@
         const data = snapshot.val();
         if (!data) { return; }
 
-        // --- NOVA LÓGICA ANTI-LOOP DE ATIVAÇÃO ---
         if (data.status === "pendente") {
-
-            // 🚨 TRAVA DE SEGURANÇA: Se o Master bloqueou manualmente, NÃO ativa sozinho!
             if (data.bloqueio_manual === true) {
                 document.body.innerHTML = `
                     <div style="height:100vh; background:#0f172a; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; padding:20px; font-family:'Inter', sans-serif;">
@@ -351,17 +347,15 @@
                         </a>
                     </div>
                 `;
-                return; // PARA TUDO AQUI. Não roda mais nada.
+                return; 
             }
 
-            // Se NÃO for bloqueio manual, segue a vida normal (Auto-Ativação com Chave)
             const chaveDigitada = sessionStorage.getItem('chave_ativacao_temp');
             if(chaveDigitada === data.codigo_secreto) {
                  update(ref(db, `lojas/${LOJA_ID}/config`), { status: "ativo" });
                  return;
             }
 
-            // Tela de inserir a chave (apenas para lojas novas)
             document.body.innerHTML = `
                 <div style="height:100vh; background:#0f172a; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; padding:20px; font-family:'Inter', sans-serif;">
                     <i class='bx bxs-lock-alt' style="font-size:5rem; color:#facc15; margin-bottom:20px;"></i>
@@ -387,11 +381,10 @@
             };
             return; 
         }
-        // --- FIM DA NOVA LÓGICA ---
 
         if(new Date() > (data.validade ? new Date(data.validade) : new Date())) { document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>SEU PLANO VENCEU<br><br>Entre em contato para renovar.</h1>"; return; }
 
-        PLANO_ATUAL = data.plano_escolhido || "mensal";
+        PLANO_ATUAL = data.plano_escolhido || "basico";
         LOJA_NOME_GLOBAL = data.nome || "Minha Loja";
         CIDADE_GLOBAL = data.cidade || "";
         
@@ -462,8 +455,18 @@
     });
 
     document.getElementById('btnSalvarProd').addEventListener('click', async () => {
-        const limite = (PLANO_ATUAL === 'anual') ? 100 : 50;
-        if (TOTAL_PRODUTOS >= limite) { alert(`Limite do plano ${PLANO_ATUAL} atingido!`); return; }
+        // --- NOVA LÓGICA DE LIMITES POR PLANO ---
+        let limite = 80; // Padrão Básico
+        if (PLANO_ATUAL === 'premium') {
+            limite = 150;
+        }
+        
+        if (TOTAL_PRODUTOS >= limite) { 
+            alert(`Seu plano ${PLANO_ATUAL.toUpperCase()} permite apenas ${limite} produtos.\nFaça o upgrade para adicionar mais!`); 
+            return; 
+        }
+        // ----------------------------------------
+
         const btn = document.getElementById('btnSalvarProd');
         const nome = document.getElementById('nomeProd').value;
         const preco = document.getElementById('precoProd').value;
@@ -481,7 +484,11 @@
     });
 
     function atualizarBadgeLimite() {
-        const limite = (PLANO_ATUAL === 'anual') ? 100 : 50;
+        // --- NOVA LÓGICA VISUAL ---
+        let limite = 80;
+        if (PLANO_ATUAL === 'premium') limite = 150;
+        // --------------------------
+
         const badge = document.getElementById('limitDisplay');
         if(badge) { badge.innerText = `${TOTAL_PRODUTOS} / ${limite}`; if (TOTAL_PRODUTOS >= limite) badge.classList.add('limit-alert'); else badge.classList.remove('limit-alert'); }
     }
