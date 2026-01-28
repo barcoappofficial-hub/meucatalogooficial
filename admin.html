@@ -206,7 +206,8 @@
                     <option value="Geral">📂 Geral</option>
                     <option value="Promoção">🔥 Promoção</option>
                     <option value="Lançamento">🚀 Lançamento</option>
-                    <option value="Cardápio">🍔 Cardápio</option> </select>
+                    <option value="Cardápio">🍔 Cardápio</option>
+                </select>
                 <label for="fotoProd" class="btn btn-outline" style="width: 50px; height: 50px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center;"><i class='bx bxs-camera' style="font-size: 1.2rem;"></i></label>
                 <input type="file" id="fotoProd" accept="image/*" style="display:none">
             </div>
@@ -271,7 +272,7 @@
                 <i class='bx bx-copy'></i> Copiar Link
             </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 13.0 - ISCA + PROMO</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 13.1 - Qualidade de Imagem Melhorada</div>
     </div>
 
     <nav class="bottom-nav">
@@ -363,10 +364,20 @@
     window.copiarLink = () => { navigator.clipboard.writeText(gerarTexto()); showToast("Copiado!"); }
     window.compartilharZap = () => { const msg = gerarTexto(); window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank'); }
 
+    // ==================================================================
+    // 📷 ALTERAÇÃO NA QUALIDADE DA IMAGEM AQUI
+    // ==================================================================
     async function comprimirArquivo(file) {
-        const options = { maxSizeMB: 0.1, maxWidthOrHeight: 600, useWebWorker: true };
+        // Aumentamos o tamanho máximo para 0.4MB (400KB) e a resolução para 1080px
+        const options = { 
+            maxSizeMB: 0.4, 
+            maxWidthOrHeight: 1080, 
+            useWebWorker: true,
+            fileType: "image/jpeg"
+        };
         try { return await imageCompression(file, options); } catch (e) { return file; }
     }
+    // ==================================================================
     
     async function enviarParaNuvem(file, pasta) {
         if (!file) return null;
