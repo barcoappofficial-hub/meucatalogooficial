@@ -4,22 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="📦 Catálogo Digital">
-    <title>Catálogo</title>
+    <title>Carregando...</title>
     
     <style>
         body { background: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; min-height: 100vh; display: flex; justify-content: center; }
         .folha { background: white; width: 100%; max-width: 600px; min-height: 100vh; display: flex; flex-direction: column; }
         
-        header { background-color: #dc2626; background-size: cover; background-position: center; padding: 40px 20px; text-align: center; border-bottom: 8px solid #facc15; color: white; }
+        header { background-color: #dc2626; background-size: cover; background-position: center; padding: 40px 20px; text-align: center; border-bottom: 8px solid #facc15; color: white; position: relative; }
+        header::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.4); z-index: 1; }
+        header * { position: relative; z-index: 2; }
+
         h1 { font-family: Impact, sans-serif; font-size: 2.8rem; margin: 0; text-transform: uppercase; text-shadow: 2px 2px 5px black; letter-spacing: 1px; }
         #txtEnd { background-color: rgba(0, 0, 0, 0.5); display: inline-block; padding: 5px 15px; border-radius: 20px; margin-top: 10px; font-size: 0.9rem; backdrop-filter: blur(2px); }
         
         .faixa { background: black; color: #facc15; font-family: Impact, sans-serif; text-align: center; font-size: 1.5rem; padding: 8px; margin: 20px auto; width: 90%; transform: skewX(-10deg); }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 10px; }
-        .card { border: 1px solid #ddd; padding: 10px; text-align: center; display: flex; flex-direction: column; background: white; border-radius: 8px; }
+        .card { border: 1px solid #ddd; padding: 10px; text-align: center; display: flex; flex-direction: column; background: white; border-radius: 8px; justify-content: space-between; }
         .card img { width: 100%; height: 160px; object-fit: cover; margin-bottom: 10px; border-radius: 4px; background-color: #f0f0f0; cursor: zoom-in; }
-        .preco { background: #facc15; color: black; font-family: Impact, sans-serif; font-size: 1.5rem; padding: 5px; transform: rotate(-2deg); margin: 5px auto; display: inline-block; }
-        .btn { background: #16a34a; color: white; text-decoration: none; padding: 10px; font-weight: bold; border-radius: 4px; display: block; }
+        
+        /* PREÇO ATUALIZADO */
+        .preco-container { margin: 10px 0; min-height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .preco { background: #facc15; color: black; font-family: Impact, sans-serif; font-size: 1.5rem; padding: 5px 10px; transform: rotate(-2deg); display: inline-block; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        
+        .old-price { font-size: 0.9rem; color: #ef4444; text-decoration: line-through; font-weight: bold; margin-bottom: -5px; display: block; }
+        .promo-tag { font-size: 1.6rem; color: #dc2626; background: #facc15; padding: 5px 10px; font-family: Impact, sans-serif; transform: rotate(-2deg); border: 2px solid red; }
+
+        .btn { background: #16a34a; color: white; text-decoration: none; padding: 12px; font-weight: bold; border-radius: 4px; display: block; text-transform: uppercase; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); }
         
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
         .modal-content { max-width: 90%; max-height: 80vh; border-radius: 8px; }
@@ -40,8 +51,7 @@
     const LOJA_ID = params.get('id');
     if (!LOJA_ID) window.location.href = "index.html";
 
-    // CONTADOR DE SEGURANÇA (Caso o cliente mande o link direto de um produto, sem passar pela capa)
-    // Se a pessoa veio da entrada.html, o sessionStorage já existe e isso aqui é ignorado.
+    // CONTADOR DE SEGURANÇA
     const chaveSessao = `visitou_${LOJA_ID}`;
     if (!sessionStorage.getItem(chaveSessao)) {
         runTransaction(ref(db, `lojas/${LOJA_ID}/metricas/visitas`), (n) => (n || 0) + 1);
@@ -49,16 +59,31 @@
     }
 
     window.verImagem = (src) => { document.getElementById('imgZoom').src = src; document.getElementById('modalZoom').style.display = "flex"; }
-    let ZAP = ""; let NOME = "";
+    
+    let ZAP = ""; 
+    let NOME = "";
+    let TIPO_NEGOCIO = "varejo"; // Padrão
+    let TEXTO_BOTAO = "COMPRAR";
 
     // CARREGA DADOS DA LOJA
     onValue(ref(db, `lojas/${LOJA_ID}/config`), (snap) => {
         const d = snap.val();
         if(d) {
             if(d.status === 'pendente' || new Date() > new Date(d.validade)) { document.body.innerHTML = "<h1 style='text-align:center;padding:50px;color:white;'>Loja Indisponível</h1>"; return; }
-            NOME = d.nome; ZAP = d.zap;
             
-            document.title = NOME + " | Catálogo";
+            NOME = d.nome; 
+            ZAP = d.zap;
+            TIPO_NEGOCIO = d.tipo_negocio || "varejo";
+
+            // Lógica do Cardápio vs Catálogo
+            if (TIPO_NEGOCIO === "restaurante") {
+                TEXTO_BOTAO = "PEDIR AGORA";
+                document.title = NOME + " | Cardápio";
+            } else {
+                TEXTO_BOTAO = "COMPRAR";
+                document.title = NOME + " | Catálogo";
+            }
+            
             document.getElementById('txtNome').innerText = NOME;
             document.getElementById('txtEnd').innerText = d.endereco || "";
             if(d.capa) document.getElementById('headerLoja').style.backgroundImage = `url('${d.capa}')`;
@@ -73,18 +98,61 @@
             const container = document.getElementById('conteudo');
             const d = snap.val();
             
-            if(!d) { container.innerHTML = "<p style='text-align:center; padding:20px;'>Nenhum produto cadastrado.</p>"; return; }
+            if(!d) { container.innerHTML = "<p style='text-align:center; padding:20px;'>Nenhum item cadastrado.</p>"; return; }
             
             const cats = {};
-            Object.values(d).forEach(p => { if(!cats[p.cat]) cats[p.cat] = []; cats[p.cat].push(p); });
+            // Agrupa e inverte a ordem (mais novos primeiro)
+            const keys = Object.keys(d).reverse();
+            keys.forEach(key => {
+                const p = d[key];
+                if(!cats[p.cat]) cats[p.cat] = []; 
+                cats[p.cat].push(p); 
+            });
 
             let htmlFinal = "";
             for(const [k, v] of Object.entries(cats)) {
                 htmlFinal += `<div class="faixa">${k}</div><div class="grid">`;
                 v.forEach(p => {
-                    const link = ZAP ? `https://wa.me/${ZAP}?text=${encodeURIComponent(`Olá ${NOME}! Quero: ${p.nome} (Cód: ${p.codigo})`)}` : "#";
-                    const preco = p.preco ? parseFloat(p.preco).toFixed(2).replace('.', ',') : "0,00";
-                    htmlFinal += `<div class="card"><img src="${p.img}" loading="lazy" onclick="verImagem('${p.img}')"><strong>${p.nome}</strong><small>Cód: ${p.codigo}</small><div class="preco">R$ ${preco}</div><a href="${link}" target="_blank" class="btn">COMPRAR</a></div>`;
+                    // Texto do WhatsApp Dinâmico
+                    let msg = "";
+                    if (TIPO_NEGOCIO === "restaurante") {
+                        msg = `Olá ${NOME}! Quero fazer um pedido: *${p.nome}*`;
+                    } else {
+                        msg = `Olá ${NOME}! Tenho interesse em: *${p.nome}* (Cód: ${p.codigo})`;
+                    }
+                    
+                    const link = ZAP ? `https://wa.me/${ZAP}?text=${encodeURIComponent(msg)}` : "#";
+                    
+                    // LÓGICA DE PREÇO PROMO "DE... POR..."
+                    let htmlPreco = "";
+                    const pNormal = parseFloat(p.preco);
+                    
+                    if (p.preco_promo && parseFloat(p.preco_promo) > 0 && parseFloat(p.preco_promo) < pNormal) {
+                        // Tem promoção
+                        const pPromo = parseFloat(p.preco_promo);
+                        htmlPreco = `
+                            <span class="old-price">R$ ${pNormal.toFixed(2).replace('.', ',')}</span>
+                            <div class="promo-tag">R$ ${pPromo.toFixed(2).replace('.', ',')}</div>
+                        `;
+                    } else {
+                        // Preço normal
+                        htmlPreco = `<div class="preco">R$ ${pNormal.toFixed(2).replace('.', ',')}</div>`;
+                    }
+
+                    htmlFinal += `
+                    <div class="card">
+                        <img src="${p.img}" loading="lazy" onclick="verImagem('${p.img}')">
+                        <div style="flex:1">
+                            <strong>${p.nome}</strong><br>
+                            ${TIPO_NEGOCIO === 'varejo' ? `<small style="color:#666">Cód: ${p.codigo}</small>` : ''}
+                        </div>
+                        <div class="preco-container">
+                            ${htmlPreco}
+                        </div>
+                        <a href="${link}" target="_blank" class="btn">
+                            <i class='bx bxl-whatsapp'></i> ${TEXTO_BOTAO}
+                        </a>
+                    </div>`;
                 });
                 htmlFinal += `</div>`;
             }
