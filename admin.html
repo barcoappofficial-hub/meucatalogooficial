@@ -44,6 +44,11 @@
         .info { flex: 1; }
         .info strong { display: block; font-size: 0.95rem; color: white; }
         .info span { color: var(--text-muted); font-size: 0.85rem; }
+        
+        /* NOVOS ESTILOS PARA PREÇO PROMO */
+        .price-old { text-decoration: line-through; color: #ef4444; font-size: 0.75rem; margin-right: 5px; }
+        .price-new { color: #22c55e; font-weight: bold; font-size: 0.9rem; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 0.75rem; cursor: pointer; width: 100%; border: none; background: none; }
         .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
@@ -151,7 +156,7 @@
                 <i class='bx bxs-group' style="font-size: 2.5rem; opacity: 0.5;"></i>
                 <span id="txtVisitas">0</span>
             </div>
-            <p style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin: 0;">Pessoas que acessaram seu catálogo</p>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.8rem; margin: 0;">Pessoas que acessaram seu <span class="termo-catalogo">catálogo</span></p>
         </div>
         
         <div class="card" style="background: linear-gradient(135deg, var(--isca) 0%, #eab308 100%); border: none; cursor: pointer;" onclick="abrirModalIsca()">
@@ -172,19 +177,30 @@
             <h2>Dicas</h2>
             <ul style="padding-left: 20px; color: var(--text-muted); font-size: 0.9rem;">
                 <li>Divulgue o link no Instagram Bio.</li>
-                <li>Use o botão roxo nos produtos para criar posts de Status.</li>
-                <li>Use a ISCA para produtos com desconto real e urgência.</li>
+                <li>Use o botão roxo nos <span class="termo-produtos">produtos</span> para criar posts de Status.</li>
+                <li>Use a ISCA para <span class="termo-produtos">produtos</span> com desconto real e urgência.</li>
             </ul>
         </div>
     </div>
 
     <div id="tab-produtos" class="tab-content active">
         <div class="card">
-            <h2>Novo Produto</h2>
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 1;"><input type="text" id="nomeProd" placeholder="Nome"></div>
-                <div style="width: 100px;"><input type="number" id="precoProd" placeholder="R$"></div>
+            <h2>Novo <span class="termo-produto-sing">Produto</span></h2>
+            
+            <label>Nome do <span class="termo-produto-sing">Produto</span></label>
+            <input type="text" id="nomeProd" placeholder="Ex: Camiseta, X-Tudo...">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Preço Normal</label>
+                    <input type="number" id="precoProd" placeholder="0.00" step="0.01">
+                </div>
+                <div>
+                    <label style="color: #22c55e;">Preço Promo (Opcional)</label>
+                    <input type="number" id="precoPromo" placeholder="De... Por..." step="0.01">
+                </div>
             </div>
+
             <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
                 <select id="catProd" style="flex:1; margin-bottom: 0;">
                     <option value="Geral">📂 Geral</option>
@@ -194,17 +210,33 @@
                 <label for="fotoProd" class="btn btn-outline" style="width: 50px; height: 50px; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center;"><i class='bx bxs-camera' style="font-size: 1.2rem;"></i></label>
                 <input type="file" id="fotoProd" accept="image/*" style="display:none">
             </div>
-            <button id="btnSalvarProd" class="btn btn-primary" style="margin-top: 15px;">Adicionar Produto</button>
+            <button id="btnSalvarProd" class="btn btn-primary" style="margin-top: 15px;">Adicionar <span class="termo-produto-sing">Produto</span></button>
         </div>
         
         <div style="display:flex; justify-content:space-between; align-items:center; padding: 0 5px; margin-bottom: 10px;">
-            <h2 style="font-size: 1rem; color: var(--text-muted); margin:0;">Seus Produtos</h2>
+            <h2 style="font-size: 1rem; color: var(--text-muted); margin:0;">Seus <span class="termo-produtos">Produtos</span></h2>
             <span id="limitDisplay" class="limit-badge">Calculando...</span>
         </div>
         <div id="lista"><div style="text-align:center; padding: 40px; color: var(--text-muted);">Carregando...</div></div>
     </div>
 
     <div id="tab-loja" class="tab-content">
+        <div class="card">
+            <h2>Dados da Loja</h2>
+            
+            <label style="color: var(--primary);">Tipo de Negócio (Gatilho)</label>
+            <select id="confTipo" style="border: 2px solid var(--primary); background: rgba(59, 130, 246, 0.1);">
+                <option value="varejo">🛍️ Catálogo (Loja de Varejo)</option>
+                <option value="restaurante">🍔 Cardápio (Restaurante/Lanche)</option>
+            </select>
+
+            <label>Nome da Loja</label><input type="text" id="confNome">
+            <label>WhatsApp</label><input type="tel" id="confZap">
+            <label>Endereço</label><input type="text" id="confEnd">
+            <label>Cidade</label><input type="text" id="confCidade" placeholder="Ex: Tefé, Manaus...">
+            <button id="btnSalvarConfig" class="btn btn-primary">Salvar Tudo</button>
+        </div>
+
         <div class="card">
             <h2>Fotos da Fachada (Carrossel)</h2>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Adicione até 5 fotos para a tela inicial.</p>
@@ -221,15 +253,6 @@
                 <label class="foto-slot" for="f5"><img id="prev5" src="" style="display:none"><i class='bx bxs-camera'></i></label>
                 <input type="file" id="f5" accept="image/*" style="display:none" onchange="preview(this, 'prev5')">
             </div>
-        </div>
-
-        <div class="card">
-            <h2>Dados da Loja</h2>
-            <label>Nome da Loja</label><input type="text" id="confNome">
-            <label>WhatsApp</label><input type="tel" id="confZap">
-            <label>Endereço</label><input type="text" id="confEnd">
-            <label>Cidade</label><input type="text" id="confCidade" placeholder="Ex: Tefé, Manaus...">
-            <button id="btnSalvarConfig" class="btn btn-primary">Salvar Tudo</button>
         </div>
         <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 20px;">Plano válido até: <strong style="color:white" id="txtValidade">...</strong></div>
     </div>
@@ -248,12 +271,12 @@
                 <i class='bx bx-copy'></i> Copiar Link
             </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 12.1 ISCA Corrigida</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 13.0 - ISCA + PROMO</div>
     </div>
 
     <nav class="bottom-nav">
         <button class="nav-item" onclick="mudarAba('dashboard', this)"><i class='bx bx-bar-chart-alt-2'></i><span>Visão Geral</span></button>
-        <button class="nav-item active" onclick="mudarAba('produtos', this)"><i class='bx bx-package'></i><span>Produtos</span></button>
+        <button class="nav-item active" onclick="mudarAba('produtos', this)"><i class='bx bx-package'></i><span id="navProdLabel">Produtos</span></button>
         <button class="nav-item" onclick="mudarAba('loja', this)"><i class='bx bx-store-alt'></i><span>Loja</span></button>
         <button class="nav-item" onclick="mudarAba('perfil', this)"><i class='bx bx-share-alt'></i><span>Compartilhar</span></button>
     </nav>
@@ -263,10 +286,11 @@
 
     const params = new URLSearchParams(window.location.search);
     let LOJA_ID = params.get('id');
-    let PLANO_ATUAL = "basico"; // PADRÃO INICIAL
+    let PLANO_ATUAL = "basico"; 
     let TOTAL_PRODUTOS = 0;
     let LOJA_NOME_GLOBAL = "";
     let CIDADE_GLOBAL = "";
+    let TIPO_NEGOCIO = "varejo"; // Variavel nova para o gatilho
     let PRODUTO_ISCA_SELECIONADO = null;
     let TEXTO_COPY_SELECIONADO = 0;
     
@@ -306,10 +330,34 @@
         }
     }
 
+    // --- FUNÇÃO PARA APLICAR TEMA (GATILHO CARDÁPIO) ---
+    function aplicarTemaVisual(tipo) {
+        TIPO_NEGOCIO = tipo;
+        const navLabel = document.getElementById('navProdLabel');
+        const termosProd = document.querySelectorAll('.termo-produtos');
+        const termoProdSing = document.querySelectorAll('.termo-produto-sing');
+        const termoCat = document.querySelectorAll('.termo-catalogo');
+        
+        if (tipo === 'restaurante') {
+            if(navLabel) navLabel.innerText = "Cardápio";
+            termosProd.forEach(el => el.innerText = "Itens do Menu");
+            termoProdSing.forEach(el => el.innerText = "Prato/Item");
+            termoCat.forEach(el => el.innerText = "cardápio");
+        } else {
+            if(navLabel) navLabel.innerText = "Produtos";
+            termosProd.forEach(el => el.innerText = "Produtos");
+            termoProdSing.forEach(el => el.innerText = "Produto");
+            termoCat.forEach(el => el.innerText = "catálogo");
+        }
+    }
+
     function gerarTexto() {
         const nome = (document.getElementById('confNome').value || "Minha Loja").trim();
         const link = window.location.href.replace("admin.html", "entrada.html");
-        return `📦 *${nome}* - Catálogo Digital\n\nClique no link abaixo para ver nossos produtos:\n👇👇👇\n${link}`;
+        // Texto dinâmico
+        const termo = TIPO_NEGOCIO === "restaurante" ? "Cardápio Digital" : "Catálogo Digital";
+        const acao = TIPO_NEGOCIO === "restaurante" ? "fazer seu pedido" : "ver nossos produtos";
+        return `📦 *${nome}* - ${termo}\n\nClique no link abaixo para ${acao}:\n👇👇👇\n${link}`;
     }
 
     window.copiarLink = () => { navigator.clipboard.writeText(gerarTexto()); showToast("Copiado!"); }
@@ -388,6 +436,11 @@
         LOJA_NOME_GLOBAL = data.nome || "Minha Loja";
         CIDADE_GLOBAL = data.cidade || "";
         
+        // APLICAR GATILHO DO CARDAPIO
+        const tipoSalvo = data.tipo_negocio || "varejo";
+        if(document.getElementById('confTipo')) document.getElementById('confTipo').value = tipoSalvo;
+        aplicarTemaVisual(tipoSalvo);
+
         if (!document.getElementById('confNome')) { window.location.reload(); return; }
 
         document.getElementById('confNome').value = data.nome || "";
@@ -412,6 +465,9 @@
             let listaFotos = dadosAtuais.fotos_loja || [];
             for(let i=1; i<=5; i++) { const fileInput = document.getElementById(`f${i}`); if(fileInput.files[0]) { const url = await enviarParaNuvem(fileInput.files[0], 'loja'); listaFotos[i-1] = url; } }
             const capaPrincipal = listaFotos[0] || dadosAtuais.capa || "";
+            
+            const tipoSelecionado = document.getElementById('confTipo').value;
+
             await set(configRef, { 
                 ...dadosAtuais, 
                 nome: document.getElementById('confNome').value, 
@@ -419,8 +475,10 @@
                 zap: document.getElementById('confZap').value, 
                 cidade: document.getElementById('confCidade').value,
                 capa: capaPrincipal, 
-                fotos_loja: listaFotos 
+                fotos_loja: listaFotos,
+                tipo_negocio: tipoSelecionado // SALVANDO O GATILHO
             });
+            aplicarTemaVisual(tipoSelecionado);
             showToast("Atualizado!");
         } catch(e) { alert("Erro: " + e.message); } finally { btn.innerText = "Salvar Tudo"; btn.disabled = false; }
     });
@@ -434,12 +492,25 @@
             const chaves = Object.keys(data); TOTAL_PRODUTOS = chaves.length; 
             chaves.reverse().forEach(key => { 
                 const p = data[key]; 
+                
+                // --- LÓGICA DE PREÇO (DE / POR) ---
+                let htmlPreco = `<strong>R$ ${p.preco.toFixed(2)}</strong>`;
+                if(p.preco_promo && parseFloat(p.preco_promo) > 0 && parseFloat(p.preco_promo) < p.preco) {
+                    htmlPreco = `
+                        <div>
+                            <span class="price-old">R$ ${p.preco.toFixed(2)}</span>
+                            <span class="price-new">R$ ${parseFloat(p.preco_promo).toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+                // ----------------------------------
+
                 div.innerHTML += `
                 <div class="product-item">
                     <img src="${p.img}" loading="lazy" onerror="this.src='https://placehold.co/50x50?text=Foto'">
                     <div class="info">
-                        <strong>${p.nome}</strong>
-                        <span>R$ ${p.preco}</span>
+                        <strong style="font-size:1rem">${p.nome}</strong>
+                        ${htmlPreco}
                     </div>
                     <button class="btn-mkt" onclick="abrirGerador('${key}')" title="Criar Post">
                         <i class='bx bxs-megaphone'></i>
@@ -456,10 +527,8 @@
 
     document.getElementById('btnSalvarProd').addEventListener('click', async () => {
         // --- NOVA LÓGICA DE LIMITES POR PLANO ---
-        let limite = 80; // Padrão Básico
-        if (PLANO_ATUAL === 'premium') {
-            limite = 150;
-        }
+        let limite = 80; 
+        if (PLANO_ATUAL === 'premium') { limite = 150; }
         
         if (TOTAL_PRODUTOS >= limite) { 
             alert(`Seu plano ${PLANO_ATUAL.toUpperCase()} permite apenas ${limite} produtos.\nFaça o upgrade para adicionar mais!`); 
@@ -470,32 +539,43 @@
         const btn = document.getElementById('btnSalvarProd');
         const nome = document.getElementById('nomeProd').value;
         const preco = document.getElementById('precoProd').value;
+        const precoPromo = document.getElementById('precoPromo').value; // CAMPO NOVO
         const cat = document.getElementById('catProd').value;
         const file = document.getElementById('fotoProd').files[0];
+        
         if(!nome || !preco) return showToast("Preencha nome e preço!");
+        
         btn.innerHTML = "⏳ ..."; btn.disabled = true;
         try {
             let imgUrl = "https://placehold.co/400x400?text=Sem+Foto";
             if(file) { imgUrl = await enviarParaNuvem(file, 'produtos'); }
-            await set(push(produtosRef), { nome, cat, preco: parseFloat(preco), img: imgUrl, codigo: Math.floor(10000 + Math.random() * 90000) });
+            
+            await set(push(produtosRef), { 
+                nome, 
+                cat, 
+                preco: parseFloat(preco), 
+                preco_promo: precoPromo ? parseFloat(precoPromo) : 0, // SALVANDO PROMO
+                img: imgUrl, 
+                codigo: Math.floor(10000 + Math.random() * 90000) 
+            });
             showToast("Adicionado!");
-            document.getElementById('nomeProd').value = ""; document.getElementById('precoProd').value = ""; document.getElementById('fotoProd').value = "";
+            document.getElementById('nomeProd').value = ""; 
+            document.getElementById('precoProd').value = ""; 
+            document.getElementById('precoPromo').value = ""; // LIMPA CAMPO
+            document.getElementById('fotoProd').value = "";
         } catch(e) { alert("Erro: " + e.message); } finally { btn.innerText = "Adicionar Produto"; btn.disabled = false; }
     });
 
     function atualizarBadgeLimite() {
-        // --- NOVA LÓGICA VISUAL ---
         let limite = 80;
         if (PLANO_ATUAL === 'premium') limite = 150;
-        // --------------------------
-
         const badge = document.getElementById('limitDisplay');
         if(badge) { badge.innerText = `${TOTAL_PRODUTOS} / ${limite}`; if (TOTAL_PRODUTOS >= limite) badge.classList.add('limit-alert'); else badge.classList.remove('limit-alert'); }
     }
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
 
     // ==========================================
-    // 🎨 MÁQUINA DE MARKETING (SIMPLIFICADA)
+    // 🎨 MÁQUINA DE MARKETING
     // ==========================================
     window.abrirGerador = async (id) => {
         const p = window.PRODUTOS_CACHE[id];
@@ -516,10 +596,10 @@
         ctx.fillStyle = "rgba(255,255,255,0.2)";
         ctx.font = "40px Inter"; ctx.textAlign = "center"; ctx.fillText("Baixando...", 540, 960);
 
-        // Carrega Imagem usando o novo método seguro
+        // Carrega Imagem
         const img = await carregarImagemSegura(p.img);
         
-        // Desenha
+        // Desenha Fundo Limpo
         ctx.fillStyle = grad; ctx.fillRect(0, 0, 1080, 1920);
         ctx.fillStyle = "#fff"; ctx.font = "bold 60px Inter, sans-serif"; ctx.textAlign = "center";
         ctx.fillText(LOJA_NOME_GLOBAL.toUpperCase(), 540, 150);
@@ -542,13 +622,23 @@
         if (ctx.measureText(p.nome).width > 900) ctx.font = "bold 70px Inter, sans-serif";
         ctx.fillText(p.nome, 540, 1450);
 
-        const precoTexto = "R$ " + parseFloat(p.preco).toFixed(2).replace('.', ',');
+        // LOGICA DE PREÇO NO MARKETING (SE TIVER PROMO)
+        let precoTexto = "R$ " + parseFloat(p.preco).toFixed(2).replace('.', ',');
+        if(p.preco_promo && parseFloat(p.preco_promo) > 0) {
+             precoTexto = "R$ " + parseFloat(p.preco_promo).toFixed(2).replace('.', ',');
+             // Desenha o "DE..."
+             ctx.fillStyle = "#ef4444"; 
+             ctx.font = "bold 50px Inter";
+             ctx.fillText("DE R$ " + parseFloat(p.preco).toFixed(2), 540, 1530);
+        }
+
         ctx.font = "bold 130px Inter, sans-serif";
         const larguraPreco = ctx.measureText(precoTexto).width;
-        ctx.fillStyle = "#facc15"; ctx.beginPath(); ctx.roundRect(540 - (larguraPreco/2) - 40, 1520, larguraPreco + 80, 180, 20); ctx.fill();
-        ctx.fillStyle = "black"; ctx.textBaseline = "middle"; ctx.fillText(precoTexto, 540, 1610);
-        ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#a855f7"; ctx.beginPath(); ctx.roundRect(140, 1750, 800, 100, 50); ctx.fill();
-        ctx.font = "bold 50px Inter, sans-serif"; ctx.fillStyle = "white"; ctx.fillText("PEÇA PELO LINK NA BIO 📲", 540, 1815);
+        ctx.fillStyle = "#facc15"; ctx.beginPath(); ctx.roundRect(540 - (larguraPreco/2) - 40, 1560, larguraPreco + 80, 180, 20); ctx.fill();
+        ctx.fillStyle = "black"; ctx.textBaseline = "middle"; ctx.fillText(precoTexto, 540, 1650);
+        
+        ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#a855f7"; ctx.beginPath(); ctx.roundRect(140, 1780, 800, 100, 50); ctx.fill();
+        ctx.font = "bold 50px Inter, sans-serif"; ctx.fillStyle = "white"; ctx.fillText("PEÇA PELO LINK NA BIO 📲", 540, 1845);
     }
 
     window.fecharMkt = () => { document.getElementById('modalMkt').style.display = "none"; }
@@ -572,11 +662,7 @@
     // ==========================================
     // 🔥 SISTEMA ISCA (COM LOADER BLINDADO)
     // ==========================================
-    
-    // --- O SEGREDO DO SUCESSO: CARREGADOR INTELIGENTE ---
-    // Tenta 3 métodos: Base64 direto, Proxy Weserv, Proxy Backup (Corsproxy)
     async function carregarImagemSegura(originalUrl) {
-        // 1. Se já for Base64 (data:image...), retorna direto
         if (originalUrl.startsWith('data:')) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -585,14 +671,8 @@
                 img.src = originalUrl;
             });
         }
-
-        // Limpeza da URL (remove protocolos duplos que confundem proxies)
         const urlLimpa = originalUrl.replace(/^https?:\/\//, '');
-        
-        // 2. Tentar Proxy Principal (Weserv)
         const tentativa1 = `https://images.weserv.nl/?url=ssl:${urlLimpa}&w=800&fit=cover&n=-1`;
-        
-        // 3. Tentar Proxy Backup (Corsproxy.io) - Caso o Weserv falhe
         const tentativa2 = `https://corsproxy.io/?${encodeURIComponent(originalUrl)}`;
 
         const carregar = (src) => {
@@ -602,23 +682,12 @@
                 img.onload = () => resolve(img);
                 img.onerror = () => reject();
                 img.src = src;
-                // Timeout de 5 segundos para não travar
                 setTimeout(() => reject(), 5000);
             });
         };
 
-        try {
-            console.log("Tentando Weserv...");
-            return await carregar(tentativa1);
-        } catch (e) {
-            console.log("Weserv falhou. Tentando Corsproxy...");
-            try {
-                return await carregar(tentativa2);
-            } catch (e2) {
-                console.log("Todos falharam.");
-                return null; // Retorna null para desenhar o placeholder
-            }
-        }
+        try { return await carregar(tentativa1); } 
+        catch (e) { try { return await carregar(tentativa2); } catch (e2) { return null; } }
     }
 
     function carregarProdutosNoSelect() {
@@ -642,14 +711,8 @@
         document.getElementById('iscaResultado').style.display = "none";
     }
 
-    window.fecharIsca = () => {
-        document.getElementById('modalIsca').style.display = "none";
-    }
-
-    window.voltarIsca = () => {
-        document.getElementById('iscaResultado').style.display = "none";
-        document.getElementById('iscaConfig').style.display = "block";
-    }
+    window.fecharIsca = () => { document.getElementById('modalIsca').style.display = "none"; }
+    window.voltarIsca = () => { document.getElementById('iscaResultado').style.display = "none"; document.getElementById('iscaConfig').style.display = "block"; }
 
     window.gerarIsca = async () => {
         const produtoId = document.getElementById('selectProdutoIsca').value;
@@ -659,7 +722,6 @@
         
         if (!produtoId || !precoNormal || !precoIsca) return alert("Preencha todos os dados!");
         
-        // Feedback visual no botão
         const btn = document.querySelector('#iscaConfig .btn-isca');
         const textoOriginal = btn.innerHTML;
         btn.innerHTML = "⏳ Gerando..."; btn.disabled = true;
@@ -667,67 +729,42 @@
         const produto = window.PRODUTOS_CACHE[produtoId];
         PRODUTO_ISCA_SELECIONADO = { ...produto, precoNormal, precoIsca, cidade };
 
-        // Desenha o Card
         await desenharCardIsca(produto, cidade, precoNormal, precoIsca);
-        
-        // Gera os textos
         gerarOpcoesTexto(produto, cidade, precoNormal, precoIsca);
         
-        // Troca telas
         document.getElementById('iscaConfig').style.display = "none";
         document.getElementById('iscaResultado').style.display = "block";
-        
-        // Restaura botão
         btn.innerHTML = textoOriginal; btn.disabled = false;
     }
 
     async function desenharCardIsca(produto, cidade, precoNormal, precoIsca) {
         const canvas = document.getElementById('canvasIsca');
         const ctx = canvas.getContext('2d');
-        
-        // Fundo
-        ctx.fillStyle = "#fbbf24"; 
-        ctx.fillRect(0, 0, 1080, 1920);
+        ctx.fillStyle = "#fbbf24"; ctx.fillRect(0, 0, 1080, 1920);
 
-        // Título
         const nomeUpper = produto.nome.toUpperCase();
-        ctx.fillStyle = "black";
-        ctx.font = "bold 65px Inter, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black"; ctx.font = "bold 65px Inter, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
         if(ctx.measureText(nomeUpper).width > 1000) { ctx.font = "bold 50px Inter, sans-serif"; }
         ctx.fillText(nomeUpper, 540, 150);
 
-        // Imagem com Loader Seguro
         const img = await carregarImagemSegura(produto.img);
-        
-        const size = 800;
-        const x = (1080 - size) / 2;
-        const y = 300;
+        const size = 800; const x = (1080 - size) / 2; const y = 300;
 
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(x, y, size, size);
-        ctx.clip();
-        
+        ctx.save(); ctx.beginPath(); ctx.rect(x, y, size, size); ctx.clip();
         if (img) {
             let sx, sy, sw, sh;
             if (img.width > img.height) { sh = img.height; sw = img.height; sx = (img.width - img.height) / 2; sy = 0; } 
             else { sw = img.width; sh = img.width; sy = (img.height - img.width) / 2; sx = 0; }
             ctx.drawImage(img, sx, sy, sw, sh, x, y, size, size);
         } else {
-            // Placeholder se falhar tudo
             ctx.fillStyle = "#334155"; ctx.fillRect(x, y, size, size);
             ctx.fillStyle = "white"; ctx.font = "100px Inter"; ctx.fillText("📷", 540, y + (size/2));
         }
         ctx.restore();
         
-        // Borda Branca
         ctx.strokeStyle = "white"; ctx.lineWidth = 20; ctx.strokeRect(x, y, size, size);
 
-        // Preços
         const yPrecos = 1250;
-        
         ctx.fillStyle = "#dc2626"; ctx.font = "bold 50px Inter, sans-serif"; ctx.fillText("DE:", 540, yPrecos);
         const precoDeTxt = `R$ ${precoNormal.toFixed(2).replace('.', ',')}`;
         ctx.font = "bold 80px Inter, sans-serif";
@@ -743,7 +780,6 @@
         ctx.fillStyle = "#22c55e"; ctx.beginPath(); ctx.roundRect(540 - wPor/2 - 40, yPrecos + 190, wPor + 80, 160, 20); ctx.fill();
         ctx.fillStyle = "white"; ctx.fillText(precoPorTxt, 540, yPrecos + 305);
 
-        // Rodapé
         ctx.fillStyle = "#b91c1c"; ctx.fillRect(0, 1920 - 100, 1080, 100);
         ctx.fillStyle = "white"; ctx.font = "bold 40px Inter, sans-serif"; ctx.fillText("👇 SÓ NO LINK ABAIXO 👇", 540, 1920 - 35);
     }
@@ -754,20 +790,12 @@
             `🔥 *OFERTA RELÂMPAGO* 🔥\n\n*${produto.nome.toUpperCase()}*\nDe: ~R$ ${precoNormal.toFixed(2).replace('.', ',')}~\nPor: *R$ ${precoIsca.toFixed(2).replace('.', ',')}*\n\n📍 ${cidade}\n👇 Peça aqui:\n${linkLoja}`,
             `⚡ *PROMOÇÃO DO DIA* ⚡\n\nEconomize agora no *${produto.nome}*!\n\n💰 Apenas *R$ ${precoIsca.toFixed(2).replace('.', ',')}*\n\n📍 Entrega em ${cidade}\n👉 ${linkLoja}`
         ];
-
-        const container = document.getElementById('copyOptions');
-        container.innerHTML = '';
-        
+        const container = document.getElementById('copyOptions'); container.innerHTML = '';
         opcoes.forEach((texto, index) => {
-            const div = document.createElement('div');
-            div.className = 'copy-option';
+            const div = document.createElement('div'); div.className = 'copy-option';
             if (index === 0) div.classList.add('selected');
             div.innerHTML = `<span class="copy-label">OPÇÃO ${index + 1}</span><div class="copy-text">${texto.replace(/\n/g, '<br>')}</div><div style="display:none" class="raw-text">${texto}</div>`;
-            div.onclick = () => {
-                document.querySelectorAll('.copy-option').forEach(el => el.classList.remove('selected'));
-                div.classList.add('selected');
-                TEXTO_COPY_SELECIONADO = index;
-            };
+            div.onclick = () => { document.querySelectorAll('.copy-option').forEach(el => el.classList.remove('selected')); div.classList.add('selected'); TEXTO_COPY_SELECIONADO = index; };
             container.appendChild(div);
         });
         TEXTO_COPY_SELECIONADO = 0;
@@ -782,19 +810,15 @@
         canvas.toBlob(async (blob) => {
             const file = new File([blob], "isca.png", { type: "image/png" });
             try { await navigator.clipboard.writeText(textoZap); showToast("Texto copiado!"); } catch(e) {}
-            
             if (navigator.share) {
                 try { await navigator.share({ files: [file], text: textoZap }); } 
-                catch (error) { 
-                    const link = document.createElement('a'); link.download = 'isca.png'; link.href = canvas.toDataURL(); link.click();
-                }
+                catch (error) { const link = document.createElement('a'); link.download = 'isca.png'; link.href = canvas.toDataURL(); link.click(); }
             } else {
                 const link = document.createElement('a'); link.download = 'isca.png'; link.href = canvas.toDataURL(); link.click();
                 alert("Imagem baixada! Cole o texto no WhatsApp.");
             }
         });
     }
-
 </script>
 </body>
 </html>
