@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel GOD MODE - V3</title>
+    <title>Painel GOD MODE - V3.1</title>
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
         /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #334155; }
         .header h1 { margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
-        .badge-god { background: linear-gradient(135deg, #f59e0b, #d97706); padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; color: black; box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+        .badge-god { background: linear-gradient(135deg, #ef4444, #b91c1c); padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; color: white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
 
         /* STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
@@ -33,7 +33,7 @@
         .stat-value { font-size: 1.8rem; font-weight: 800; color: white; }
         .stat-icon { font-size: 1.5rem; color: var(--primary); position: absolute; top: 20px; right: 20px; opacity: 0.5; }
 
-        /* TOOLBAR E FILTROS */
+        /* TOOLBAR */
         .toolbar { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
         .filter-group { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
         .filter-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 8px 16px; border-radius: 50px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; white-space: nowrap; }
@@ -66,7 +66,7 @@
         .pl-mensal { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
         .pl-anual { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 10px rgba(168, 85, 247, 0.1); }
 
-        /* BOTÕES DE AÇÃO */
+        /* AÇÕES */
         .actions { display: flex; gap: 5px; }
         .btn-mini { width: 32px; height: 32px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.2s; }
         .btn-mini:hover { transform: translateY(-2px); filter: brightness(1.2); }
@@ -74,6 +74,10 @@
         .b-zap { background: rgba(37, 211, 102, 0.1); color: #25D366; }
         .b-copy { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
         .b-del { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        
+        /* BOTÃO BLOQUEIO - V3.1 */
+        .b-lock { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .b-unlock { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 
         .btn-renovar-m { background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.75rem; font-weight: bold; padding: 0 10px; width: auto; }
         .btn-renovar-a { background: rgba(168, 85, 247, 0.2); color: #c084fc; font-size: 0.75rem; font-weight: bold; padding: 0 10px; width: auto; }
@@ -91,16 +95,16 @@
     <div id="loginScreen">
         <div class="login-box">
             <i class='bx bxs-shield-plus' style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
-            <h2>GOD MODE V3</h2>
+            <h2>GOD MODE V3.1</h2>
             <input type="password" id="senhaInput" placeholder="Senha Mestra">
-            <button onclick="verificarSenha()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">ENTRAR NO SISTEMA</button>
+            <button onclick="verificarSenha()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">ACESSAR PAINEL</button>
         </div>
     </div>
 
     <div id="painel" style="display:none">
         
         <div class="header">
-            <h1><i class='bx bxs-dashboard'></i> Painel Master <span class="badge-god">V 3.0</span></h1>
+            <h1><i class='bx bxs-dashboard'></i> Painel Master <span class="badge-god">V 3.1</span></h1>
             <button onclick="location.reload()" style="background:none; border:1px solid #334155; color:#f87171; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
         </div>
 
@@ -125,7 +129,7 @@
             </div>
             <div class="stat-card">
                 <i class='bx bxs-error-circle stat-icon' style="color: #ef4444;"></i>
-                <div class="stat-label">Atenção (Pend/Venc)</div>
+                <div class="stat-label">Bloqueadas / Vencidas</div>
                 <div class="stat-value" id="stPend" style="color: #fca5a5;">0</div>
             </div>
         </div>
@@ -133,7 +137,7 @@
         <div class="toolbar">
             <div class="filter-group">
                 <button class="filter-btn active" onclick="filtrarStatus('todos', this)">Todos</button>
-                <button class="filter-btn" onclick="filtrarStatus('pendente', this)">⏳ Pendentes</button>
+                <button class="filter-btn" onclick="filtrarStatus('pendente', this)">🔒 Bloqueadas</button>
                 <button class="filter-btn" onclick="filtrarStatus('ativo', this)">✅ Ativos</button>
                 <button class="filter-btn" onclick="filtrarStatus('vencido', this)">⚠️ Vencidos</button>
                 <button class="filter-btn" onclick="filtrarStatus('anual', this)">💎 Anuais</button>
@@ -153,7 +157,7 @@
                         <th>Status / Chave</th>
                         <th>Vencimento</th>
                         <th>Visitas</th>
-                        <th>Ações Rápidas</th>
+                        <th>Ações Master</th>
                     </tr>
                 </thead>
                 <tbody id="listaLojas"></tbody>
@@ -164,7 +168,6 @@
 <script type="module">
     import { db, ref, onValue, set, remove, get, update } from './firebase-config.js';
 
-    // --- LOGIN ---
     window.verificarSenha = () => {
         if(document.getElementById('senhaInput').value === "C@listhenys1994") {
             document.getElementById('loginScreen').style.display = 'none';
@@ -173,7 +176,6 @@
         } else { alert("Senha Incorreta"); }
     }
 
-    // --- CARREGAMENTO ---
     let lojasData = [];
     let filtroAtual = 'todos';
 
@@ -181,7 +183,6 @@
         onValue(ref(db, 'lojas'), (snapshot) => {
             const dados = snapshot.val();
             lojasData = [];
-
             let total = 0, mensal = 0, anual = 0, pendentes = 0, fat = 0;
 
             if(dados) {
@@ -189,7 +190,6 @@
                     const c = loja.config || {};
                     const m = loja.metricas || {};
                     
-                    // Cálculo Status
                     const validade = c.validade ? new Date(c.validade) : new Date(0);
                     const hoje = new Date();
                     const diasRestantes = Math.ceil((validade - hoje) / (1000 * 60 * 60 * 24));
@@ -198,7 +198,6 @@
                     if (c.status === 'pendente') status = 'pendente';
                     else if (diasRestantes < 0) status = 'vencido';
 
-                    // Contadores
                     total++;
                     if (status === 'pendente' || status === 'vencido') pendentes++;
                     if (status === 'ativo') {
@@ -221,13 +220,11 @@
                 });
             }
 
-            // Atualiza Stats
             document.getElementById('stTotal').innerText = total;
             document.getElementById('stFat').innerText = fat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('stMensal').innerText = mensal;
             document.getElementById('stAnual').innerText = anual;
             document.getElementById('stPend').innerText = pendentes;
-
             renderizarTabela();
         });
     }
@@ -236,52 +233,49 @@
         const tbody = document.getElementById('listaLojas');
         tbody.innerHTML = "";
         
-        // 1. Filtragem
         const termo = document.getElementById('searchInput').value.toLowerCase();
         let listaFiltrada = lojasData.filter(loja => {
             const matchTexto = loja.raw.includes(termo);
             if (!matchTexto) return false;
-
             if (filtroAtual === 'todos') return true;
             if (filtroAtual === 'anual') return loja.plano === 'anual';
             return loja.status === filtroAtual;
         });
 
-        // 2. Ordenação (Pendentes > Vencidos > Ativos > Data Recente)
         listaFiltrada.sort((a, b) => {
             const peso = { 'pendente': 3, 'vencido': 2, 'ativo': 1 };
             if (peso[a.status] !== peso[b.status]) return peso[b.status] - peso[a.status];
             return b.validade - a.validade;
         });
 
-        // 3. HTML
         if (listaFiltrada.length === 0) {
             tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:30px'>Nenhum resultado.</td></tr>";
             return;
         }
 
         listaFiltrada.forEach(loja => {
-            // Badges
             let badgeStatus = "";
             let rowStyle = "";
-            let msgZap = `Olá ${loja.nome}, tudo bem?`;
+            let btnLock = "";
 
             if (loja.status === 'pendente') {
-                badgeStatus = `<span class="status-badge st-pendente"><i class='bx bx-time'></i> PENDENTE</span>`;
+                badgeStatus = `<span class="status-badge st-pendente"><i class='bx bxs-lock-alt'></i> BLOQUEADO</span>`;
                 rowStyle = "background: rgba(245, 158, 11, 0.05);";
-                msgZap = `Olá! A chave de ativação para a loja *${loja.nome}* é: *${loja.codigo}*`;
-            } else if (loja.status === 'vencido') {
-                badgeStatus = `<span class="status-badge st-vencido">VENCIDO (${Math.abs(loja.diasRestantes)}d)</span>`;
-                msgZap = `Olá! O plano da loja *${loja.nome}* venceu. Vamos renovar?`;
+                // Botão para DESBLOQUEAR
+                btnLock = `<button class="btn-mini b-unlock" onclick="alterarStatus('${loja.id}', 'ativo')" title="DESBLOQUEAR Loja"><i class='bx bxs-lock-open'></i></button>`;
             } else {
-                badgeStatus = `<span class="status-badge st-ativo">ATIVO (${loja.diasRestantes}d)</span>`;
+                if (loja.status === 'vencido') badgeStatus = `<span class="status-badge st-vencido">VENCIDO (${Math.abs(loja.diasRestantes)}d)</span>`;
+                else badgeStatus = `<span class="status-badge st-ativo">ATIVO (${loja.diasRestantes}d)</span>`;
+                
+                // Botão para BLOQUEAR
+                btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'pendente')" title="BLOQUEAR Loja"><i class='bx bxs-lock'></i></button>`;
             }
 
             const badgePlano = loja.plano === 'anual' 
                 ? `<span class="plano-badge pl-anual">💎 ANUAL</span>` 
                 : `<span class="plano-badge pl-mensal">📅 MENSAL</span>`;
 
-            const linkZap = `https://wa.me/${loja.zap}?text=${encodeURIComponent(msgZap)}`;
+            const linkZap = `https://wa.me/${loja.zap}`;
 
             const tr = `
                 <tr style="${rowStyle}">
@@ -293,7 +287,7 @@
                     <td>
                         <div style="display:flex; flex-direction:column; gap:5px;">
                             ${badgeStatus}
-                            ${loja.status === 'pendente' ? `<div class="codigo-box" onclick="copiar('${loja.codigo}')">${loja.codigo}</div>` : ''}
+                            ${loja.status === 'pendente' ? `<div class="codigo-box" onclick="copiar('${loja.codigo}')" title="Copiar Chave">${loja.codigo}</div>` : ''}
                         </div>
                     </td>
                     <td style="font-size:0.85rem; color:#ccc;">
@@ -302,7 +296,7 @@
                     <td><span class="status-badge" style="background:#334155"><i class='bx bx-show'></i> ${loja.visitas}</span></td>
                     <td>
                         <div class="actions">
-                            <button class="btn-mini b-zap" onclick="window.open('${linkZap}', '_blank')" title="WhatsApp"><i class='bx bxl-whatsapp'></i></button>
+                            ${btnLock} <button class="btn-mini b-zap" onclick="window.open('${linkZap}', '_blank')" title="WhatsApp"><i class='bx bxl-whatsapp'></i></button>
                             <button class="btn-mini b-copy" onclick="copiarLink('${loja.id}')" title="Copiar Link"><i class='bx bx-link'></i></button>
                             <button class="btn-mini btn-renovar-m" onclick="renovar('${loja.id}', 'mensal')" title="Renovar +30 Dias">+30</button>
                             <button class="btn-mini btn-renovar-a" onclick="renovar('${loja.id}', 'anual')" title="Renovar +1 Ano">+1A</button>
@@ -315,17 +309,31 @@
         });
     }
 
-    // --- FUNÇÕES GLOBAIS ---
+    // --- FUNÇÕES DE CONTROLE ---
+    
+    // NOVO: Função para Bloquear/Desbloquear Manualmente
+    window.alterarStatus = async (id, novoStatus) => {
+        const msg = novoStatus === 'pendente' 
+            ? "⚠️ TEM CERTEZA QUE DESEJA BLOQUEAR ESTA LOJA?\nO catálogo e o painel sairão do ar imediatamente."
+            : "DESBLOQUEAR LOJA?\nO acesso será restaurado imediatamente.";
+            
+        if(confirm(msg)) {
+            await update(ref(db, `lojas/${id}/config`), { status: novoStatus });
+            // Se for desbloquear, garantimos que a validade esteja ok
+            if(novoStatus === 'ativo') {
+                // Opcional: Você pode adicionar lógica aqui para renovar a data se ela estiver vencida ao desbloquear
+            }
+        }
+    }
+
     window.filtrarStatus = (status, btn) => {
         filtroAtual = status;
         document.querySelectorAll('.filter-btn').forEach(b => {
             b.classList.remove('active', 'active-pendente', 'active-vencido');
         });
-        
         btn.classList.add('active');
         if(status === 'pendente') btn.classList.add('active-pendente');
         if(status === 'vencido') btn.classList.add('active-vencido');
-        
         renderizarTabela();
     }
 
@@ -333,7 +341,7 @@
 
     window.copiar = (txt) => {
         navigator.clipboard.writeText(txt);
-        alert("Copiado: " + txt);
+        alert("Chave copiada: " + txt);
     }
 
     window.copiarLink = (id) => {
@@ -344,7 +352,6 @@
     window.renovar = async (id, tipo) => {
         const dias = tipo === 'anual' ? 365 : 30;
         const valor = tipo === 'anual' ? "R$ 249,90" : "R$ 59,90";
-        
         if(!confirm(`CONFIRMA RENOVAÇÃO ${tipo.toUpperCase()}?\n\nLoja: ${id}\nAdicionar: ${dias} dias\nValor: ${valor}`)) return;
 
         const lojaRef = ref(db, `lojas/${id}/config`);
@@ -353,7 +360,6 @@
 
         let validadeAtual = new Date(data.validade || 0);
         const hoje = new Date();
-        // Se já venceu, começa a contar de hoje. Se não, soma na data atual.
         let baseData = (validadeAtual > hoje) ? validadeAtual : hoje;
         baseData.setDate(baseData.getDate() + dias);
 
@@ -362,7 +368,7 @@
             plano_escolhido: tipo,
             validade: baseData.toISOString()
         });
-        alert(`Sucesso! Loja renovada até ${baseData.toLocaleDateString('pt-BR')}`);
+        alert(`Sucesso! Renovado até ${baseData.toLocaleDateString('pt-BR')}`);
     }
 
     window.apagar = async (id) => {
