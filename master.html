@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel GOD MODE - V5.3 (Final)</title>
+    <title>Painel GOD MODE - V4.1 (Trial + Dízimo)</title>
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
         :root {
             --bg: #0f172a; --surface: #1e293b; --primary: #3b82f6; --text: #f1f5f9; --text-muted: #94a3b8;
             --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --premium: #a855f7;
-            --gold: #fbbf24; --teste: #60a5fa;
         }
 
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; min-height: 100vh; }
@@ -29,17 +28,18 @@
 
         /* STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
-        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card { background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px; }
         .stat-value { font-size: 1.8rem; font-weight: 800; color: white; }
         .stat-icon { font-size: 1.5rem; color: var(--primary); position: absolute; top: 20px; right: 20px; opacity: 0.5; }
-        .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* CARD ESPECIAL DÍZIMO */
-        .card-dizimo { border: 1px solid rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.05); }
-        .card-dizimo .stat-value { color: var(--gold); }
-        .card-dizimo .stat-icon { color: var(--gold); opacity: 0.8; }
-        .card-dizimo .stat-label { color: var(--gold); }
+        /* NOVO: CARD DE DÍZIMO */
+        .dizimo-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.05));
+            border: 2px solid rgba(168, 85, 247, 0.3);
+        }
+        .dizimo-card .stat-icon { color: var(--premium); }
+        .dizimo-valor { font-size: 1.5rem; color: #c084fc; margin-top: 5px; }
 
         /* TOOLBAR */
         .toolbar { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
@@ -48,7 +48,6 @@
         .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         .filter-btn.active-bloq { background: #b91c1c; color: white; border-color: #b91c1c; }
         .filter-btn.active-vencido { background: var(--danger); color: white; border-color: var(--danger); }
-        .filter-btn.active-teste { background: var(--teste); color: white; border-color: var(--teste); }
 
         .search-box { position: relative; width: 100%; }
         .search-box input { width: 100%; padding: 12px 12px 12px 40px; background: var(--bg); border: 1px solid #334155; color: white; border-radius: 8px; outline: none; box-sizing: border-box; }
@@ -56,12 +55,13 @@
 
         /* TABELA */
         .table-container { background: var(--surface); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); overflow-x: auto; min-height: 400px; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        table { width: 100%; border-collapse: collapse; min-width: 1200px; }
         th { text-align: left; padding: 15px 20px; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid #334155; }
         td { padding: 15px 20px; border-bottom: 1px solid #334155; vertical-align: middle; }
         tr:hover { background: rgba(255,255,255,0.02); }
 
         .loja-nome { font-weight: bold; font-size: 0.95rem; color: white; display: block; }
+        .loja-id { font-family: monospace; color: var(--primary); font-size: 0.8rem; }
         
         /* BADGES STATUS */
         .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
@@ -69,11 +69,10 @@
         .st-bloq { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #ef4444; }
         .st-ativo { background: rgba(16, 185, 129, 0.1); color: var(--success); }
         .st-vencido { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        /* Badge Teste */
-        .st-teste { background: rgba(59, 130, 246, 0.1); color: var(--teste); border: 1px dashed var(--teste); }
 
         /* BADGES PLANOS */
         .plano-badge { padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; display: inline-block; min-width: 70px; text-align: center; }
+        .pl-inicio { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .pl-basico { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
         .pl-premium { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 0 10px rgba(168, 85, 247, 0.15); }
 
@@ -88,15 +87,9 @@
         .b-lock { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
         .b-unlock { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         
-        /* NOVO BOTÃO: MATAR TESTE (Agora com estilo de destaque) */
-        .b-kill { 
-            background: rgba(239, 68, 68, 0.2); 
-            color: #f87171; 
-            border: 1px solid rgba(239, 68, 68, 0.5); 
-            width: auto; padding: 0 10px;
-            font-size: 0.8rem; font-weight: bold;
-        }
-        .b-kill:hover { background: #ef4444; color: white; }
+        /* NOVO: SEGUNDO CADEADO (TRIAL) */
+        .b-lock-trial { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+        .b-unlock-trial { background: rgba(16, 185, 129, 0.1); color: #10b981; }
 
         .btn-renovar { font-size: 0.75rem; font-weight: bold; padding: 0 10px; width: auto; border: 1px solid transparent; }
         .btn-ren-bas { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
@@ -108,6 +101,7 @@
             background: rgba(250, 204, 21, 0.1); padding: 5px 10px; border-radius: 6px;
             border: 1px dashed #facc15; cursor: pointer; text-align: center;
         }
+        .codigo-box:hover { background: #facc15; color: black; }
     </style>
 </head>
 <body>
@@ -115,7 +109,7 @@
     <div id="loginScreen">
         <div class="login-box">
             <i class='bx bxs-shield-plus' style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
-            <h2>GOD MODE V5.3</h2>
+            <h2>GOD MODE V4.1</h2>
             <input type="password" id="senhaInput" placeholder="Senha Mestra">
             <button onclick="verificarSenha()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">ACESSAR PAINEL</button>
         </div>
@@ -124,41 +118,34 @@
     <div id="painel" style="display:none">
         
         <div class="header">
-            <h1><i class='bx bxs-dashboard'></i> Painel Master <span class="badge-god">V 5.3</span></h1>
+            <h1><i class='bx bxs-dashboard'></i> Painel Master <span class="badge-god">V 4.1</span></h1>
             <button onclick="location.reload()" style="background:none; border:1px solid #334155; color:#f87171; padding:8px 15px; border-radius:8px; cursor:pointer;">Sair</button>
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card card-dizimo">
-                <i class='bx bxs-church stat-icon'></i>
-                <div class="stat-label">Separar para Dízimo (10%)</div>
-                <div class="stat-value" id="stDizimo">R$ 0,00</div>
-                <div class="stat-sub">Calculado sobre o recebido</div>
-            </div>
-
-            <div class="stat-card">
-                <i class='bx bxs-wallet stat-icon' style="color: #10b981;"></i>
-                <div class="stat-label">Receita (Pagantes)</div>
-                <div class="stat-value" id="stFat">R$ 0,00</div>
-                <div class="stat-sub">Exclui Períodos Grátis</div>
-            </div>
-
             <div class="stat-card">
                 <i class='bx bxs-store stat-icon'></i>
                 <div class="stat-label">Total de Clientes</div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                    <div class="stat-value" id="stTotal">0</div>
-                    <div style="font-size:0.8rem; text-align:right;">
-                        <div style="color:var(--teste)">Testes: <b id="stTesteCount">0</b></div>
-                        <div style="color:#ef4444">Inad.: <b id="stPend">0</b></div>
-                    </div>
-                </div>
+                <div class="stat-value" id="stTotal">0</div>
             </div>
-
+            
+            <div class="stat-card">
+                <i class='bx bxs-wallet stat-icon' style="color: #10b981;"></i>
+                <div class="stat-label">Receita Recorrente (MRR)</div>
+                <div class="stat-value" id="stFat">R$ 0,00</div>
+            </div>
+            
+            <div class="stat-card dizimo-card">
+                <i class='bx bxs-donate-heart stat-icon'></i>
+                <div class="stat-label">💜 Dízimo a Pagar (10%)</div>
+                <div class="dizimo-valor" id="stDizimo">R$ 0,00</div>
+            </div>
+            
             <div class="stat-card">
                 <i class='bx bxs-layer stat-icon' style="color: #a855f7;"></i>
                 <div class="stat-label">Mix de Planos</div>
-                <div style="font-size: 0.9rem; margin-top: 5px; color:white;">
+                <div style="font-size: 0.85rem; margin-top: 5px; color:white;">
+                    <span style="color:#10b981">Trial: <b id="stInicio">0</b></span> | 
                     <span style="color:#60a5fa">Básico: <b id="stBasico">0</b></span> | 
                     <span style="color:#c084fc">Premium: <b id="stPremium">0</b></span>
                 </div>
@@ -168,311 +155,321 @@
         <div class="toolbar">
             <div class="filter-group">
                 <button class="filter-btn active" onclick="filtrarStatus('todos', this)">Todos</button>
-                <button class="filter-btn" onclick="filtrarStatus('teste', this)">⏱️ Em Teste</button>
-                <button class="filter-btn" onclick="filtrarStatus('ativo', this)">✅ Ativos</button>
-                <button class="filter-btn" onclick="filtrarStatus('bloqueado', this)">⛔ Bloqueadas</button>
-                <button class="filter-btn" onclick="filtrarStatus('vencido', this)">⚠️ Vencidos</button>
-                <button class="filter-btn" onclick="filtrarStatus('premium', this)">💎 Premium</button>
+                <button class="filter-btn" onclick="filtrarStatus('ativo', this)">Ativos</button>
+                <button class="filter-btn" onclick="filtrarStatus('novo', this)">Aguardando</button>
+                <button class="filter-btn" onclick="filtrarStatus('vencido', this)">Vencidos</button>
+                <button class="filter-btn" onclick="filtrarStatus('bloqueado', this)">Bloqueados</button>
             </div>
             <div class="search-box">
                 <i class='bx bx-search'></i>
-                <input type="text" id="searchInput" placeholder="Buscar por Nome, ID ou WhatsApp..." onkeyup="filtrarTexto()">
+                <input type="text" id="searchInput" placeholder="Buscar loja..." oninput="filtrarTexto()">
             </div>
         </div>
 
         <div class="table-container">
-            <table id="tabelaLojas">
+            <table>
                 <thead>
                     <tr>
-                        <th>Cliente / Loja</th>
-                        <th>Plano Atual</th>
-                        <th>Status / Chave</th>
+                        <th>Loja / ID</th>
+                        <th>Plano</th>
+                        <th>Status</th>
                         <th>Vencimento</th>
                         <th>Visitas</th>
-                        <th>Renovar / Ações</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="listaLojas"></tbody>
+                <tbody id="tabelaLojas"></tbody>
             </table>
         </div>
     </div>
 
-<script type="module">
-    import { db, ref, onValue, set, remove, get, update } from './firebase-config.js';
+    <script type="module">
+        import { db, ref, get, update, remove } from './firebase-config.js';
 
-    window.verificarSenha = () => {
-        if(document.getElementById('senhaInput').value === "C@listhenys1994") {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('painel').style.display = 'block';
-            carregarLojas();
-        } else { alert("Senha Incorreta"); }
-    }
+        const SENHA_MESTRE = "master2025";
+        let lojas = [];
+        let filtroAtual = 'todos';
 
-    let lojasData = [];
-    let filtroAtual = 'todos';
-
-    function carregarLojas() {
-        onValue(ref(db, 'lojas'), (snapshot) => {
-            const dados = snapshot.val();
-            lojasData = [];
-            let total = 0, basico = 0, premium = 0, pendentes = 0, fat = 0;
-            let testes = 0;
-
-            if(dados) {
-                Object.entries(dados).forEach(([id, loja]) => {
-                    const c = loja.config || {};
-                    const m = loja.metricas || {};
-                    
-                    const validade = c.validade ? new Date(c.validade) : new Date(0);
-                    const hoje = new Date();
-                    const diasRestantes = Math.ceil((validade - hoje) / (1000 * 60 * 60 * 24));
-                    
-                    let status = 'ativo';
-                    let isBloqueioManual = c.bloqueio_manual === true;
-                    let isTeste = c.em_teste === true; 
-
-                    if (c.status === 'pendente') {
-                        status = isBloqueioManual ? 'bloqueado' : 'novo';
-                    } else if (diasRestantes < 0) {
-                        status = 'vencido';
-                    } else if (isTeste) {
-                        status = 'teste';
-                    } else if (isBloqueioManual) {
-                        status = 'bloqueado';
-                    }
-
-                    let plano = c.plano_escolhido;
-                    if(!plano || plano === 'mensal') plano = 'basico'; 
-                    if(plano === 'anual') plano = 'premium';
-
-                    total++;
-                    if (status === 'bloqueado' || status === 'vencido' || status === 'novo') pendentes++;
-                    if (status === 'teste') testes++;
-                    
-                    if (status === 'ativo' || (status === 'vencido' && !isTeste)) {
-                        if (plano === 'premium') { premium++; fat += 79.90; }
-                        else { basico++; fat += 59.90; }
-                    }
-
-                    lojasData.push({
-                        id,
-                        nome: c.nome || "Sem Nome",
-                        zap: c.zap || "",
-                        plano,
-                        status,
-                        isBloqueioManual,
-                        diasRestantes,
-                        validade,
-                        visitas: m.visitas || 0,
-                        codigo: c.codigo_secreto || "---",
-                        raw: (c.nome + id + c.zap).toLowerCase(),
-                        isTeste: isTeste 
-                    });
-                });
+        window.verificarSenha = () => {
+            const senha = document.getElementById('senhaInput').value;
+            if(senha === SENHA_MESTRE) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('painel').style.display = 'block';
+                carregarLojas();
+            } else {
+                alert("❌ Senha incorreta!");
             }
+        }
 
-            // CALCULA DÍZIMO (10%)
-            let dizimo = fat * 0.10;
+        async function carregarLojas() {
+            const snapshot = await get(ref(db, 'lojas'));
+            if(!snapshot.exists()) { renderizarTabela(); return; }
+
+            const data = snapshot.val();
+            lojas = Object.keys(data).map(id => {
+                const loja = data[id].config || {};
+                const produtos = data[id].produtos || {};
+                const totalProdutos = Object.keys(produtos).length;
+                
+                const hoje = new Date();
+                const validade = new Date(loja.validade || 0);
+                const diasRestantes = Math.ceil((validade - hoje) / (1000 * 60 * 60 * 24));
+
+                let status = loja.status || 'novo';
+                
+                // Se tem bloqueio manual do admin, sobrescreve status
+                if(loja.bloqueio_manual) {
+                    status = 'bloqueado';
+                }
+                // Se venceu e não está bloqueado manualmente
+                else if(diasRestantes < 0 && status !== 'bloqueado') {
+                    status = 'vencido';
+                }
+
+                return {
+                    id,
+                    nome: loja.nome || 'Sem nome',
+                    zap: loja.zap || '',
+                    status,
+                    plano: loja.plano_escolhido || 'inicio',
+                    validade,
+                    diasRestantes,
+                    codigo: loja.codigo_secreto || '',
+                    totalProdutos,
+                    visitas: loja.visitas || 0,
+                    is_trial_active: loja.is_trial_active || false, // NOVO
+                    trial_bloqueado: loja.trial_bloqueado || false // NOVO: flag de bloqueio específico do trial
+                };
+            }).sort((a, b) => a.nome.localeCompare(b.nome));
+
+            calcularEstatisticas();
+            renderizarTabela();
+        }
+
+        function calcularEstatisticas() {
+            const total = lojas.length;
+            
+            // Contagem por plano
+            const countInicio = lojas.filter(l => l.plano === 'inicio').length;
+            const countBasico = lojas.filter(l => l.plano === 'basico').length;
+            const countPremium = lojas.filter(l => l.plano === 'premium').length;
+            
+            // Receita (apenas planos pagos ativos ou vencidos recentemente)
+            let receitaTotal = 0;
+            lojas.forEach(loja => {
+                if(loja.plano === 'basico' && (loja.status === 'ativo' || loja.diasRestantes > -30)) {
+                    receitaTotal += 59.90;
+                }
+                else if(loja.plano === 'premium' && (loja.status === 'ativo' || loja.diasRestantes > -30)) {
+                    receitaTotal += 79.90;
+                }
+            });
+
+            const dizimo = receitaTotal * 0.10;
 
             document.getElementById('stTotal').innerText = total;
-            document.getElementById('stFat').innerText = fat.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('stDizimo').innerText = dizimo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('stFat').innerText = `R$ ${receitaTotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('stDizimo').innerText = `R$ ${dizimo.toFixed(2).replace('.', ',')}`;
+            document.getElementById('stInicio').innerText = countInicio;
+            document.getElementById('stBasico').innerText = countBasico;
+            document.getElementById('stPremium').innerText = countPremium;
+        }
+
+        function renderizarTabela() {
+            const tbody = document.getElementById('tabelaLojas');
+            tbody.innerHTML = '';
             
-            document.getElementById('stBasico').innerText = basico;
-            document.getElementById('stPremium').innerText = premium;
-            document.getElementById('stPend').innerText = pendentes;
-            document.getElementById('stTesteCount').innerText = testes;
+            const busca = document.getElementById('searchInput').value.toLowerCase();
             
+            const filtradas = lojas.filter(loja => {
+                const matchBusca = loja.nome.toLowerCase().includes(busca) || loja.id.includes(busca);
+                if(!matchBusca) return false;
+                
+                if(filtroAtual === 'todos') return true;
+                if(filtroAtual === 'ativo') return loja.status === 'ativo';
+                if(filtroAtual === 'novo') return loja.status === 'novo';
+                if(filtroAtual === 'vencido') return loja.status === 'vencido';
+                if(filtroAtual === 'bloqueado') return loja.status === 'bloqueado';
+                return true;
+            });
+
+            if(filtradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b; padding:40px;">Nenhuma loja encontrada</td></tr>`;
+                return;
+            }
+
+            filtradas.forEach(loja => {
+                let badgeStatus, rowStyle, btnLock;
+
+                if(loja.status === 'bloqueado') {
+                    badgeStatus = `<span class="status-badge st-bloq"><i class='bx bxs-lock'></i> BLOQ. ADM</span>`;
+                    rowStyle = "background: rgba(239, 68, 68, 0.05);";
+                    btnLock = `<button class="btn-mini b-unlock" onclick="alterarStatus('${loja.id}', 'desbloquear')" title="DESBLOQUEAR"><i class='bx bxs-lock-open'></i></button>`;
+                } 
+                else if (loja.status === 'novo') {
+                    badgeStatus = `<span class="status-badge st-novo"><i class='bx bxs-key'></i> AGUARDANDO</span>`;
+                    rowStyle = "background: rgba(245, 158, 11, 0.05);";
+                    btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
+                } 
+                else if (loja.status === 'vencido') {
+                    badgeStatus = `<span class="status-badge st-vencido">VENCIDO (${Math.abs(loja.diasRestantes)}d)</span>`;
+                    btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
+                } 
+                else {
+                    badgeStatus = `<span class="status-badge st-ativo">ATIVO (${loja.diasRestantes}d)</span>`;
+                    btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
+                }
+
+                // Badge do plano
+                let badgePlano;
+                if(loja.plano === 'inicio') {
+                    badgePlano = `<span class="plano-badge pl-inicio">TRIAL 15D</span>`;
+                } else if(loja.plano === 'premium') {
+                    badgePlano = `<span class="plano-badge pl-premium">PREMIUM</span>`;
+                } else {
+                    badgePlano = `<span class="plano-badge pl-basico">BÁSICO</span>`;
+                }
+
+                // NOVO: Segundo cadeado (bloqueio específico do trial)
+                let btnLockTrial = '';
+                if(loja.plano === 'inicio') {
+                    if(loja.trial_bloqueado) {
+                        btnLockTrial = `<button class="btn-mini b-unlock-trial" onclick="alterarTrialStatus('${loja.id}', 'desbloquear-trial')" title="LIBERAR TRIAL"><i class='bx bxs-lock-open'></i></button>`;
+                    } else {
+                        btnLockTrial = `<button class="btn-mini b-lock-trial" onclick="alterarTrialStatus('${loja.id}', 'bloquear-trial')" title="BLOQUEAR TRIAL"><i class='bx bxs-lock'></i></button>`;
+                    }
+                }
+
+                const linkZap = `https://wa.me/${loja.zap}`;
+
+                const tr = `
+                    <tr style="${rowStyle}">
+                        <td>
+                            <span class="loja-nome">${loja.nome}</span>
+                            <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">
+                                ${loja.id} <i class='bx bx-copy' style="cursor:pointer" onclick="copiar('${loja.id}')"></i>
+                            </div>
+                        </td>
+                        <td>${badgePlano}</td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:5px;">
+                                ${badgeStatus}
+                                ${loja.status === 'novo' ? `<div class="codigo-box" onclick="copiar('${loja.codigo}')" title="Copiar Chave">${loja.codigo}</div>` : ''}
+                            </div>
+                        </td>
+                        <td style="font-size:0.85rem; color:#ccc;">
+                            ${loja.validade.toLocaleDateString('pt-BR')}
+                        </td>
+                        <td><span class="status-badge" style="background:#334155"><i class='bx bx-show'></i> ${loja.visitas}</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn-mini btn-renovar btn-ren-bas" onclick="renovar('${loja.id}', 'basico')" title="Renovar/Mudar para Básico">BÁSICO</button>
+                                <button class="btn-mini btn-renovar btn-ren-pre" onclick="renovar('${loja.id}', 'premium')" title="Renovar/Mudar para Premium">PREMIUM</button>
+                                
+                                <div style="width:1px; background:#334155; margin:0 5px;"></div>
+
+                                ${btnLock}
+                                ${btnLockTrial}
+                                <button class="btn-mini b-zap" onclick="window.open('${linkZap}', '_blank')" title="WhatsApp"><i class='bx bxl-whatsapp'></i></button>
+                                <button class="btn-mini b-copy" onclick="copiarLink('${loja.id}')" title="Link Loja"><i class='bx bx-link'></i></button>
+                                <button class="btn-mini b-del" onclick="apagar('${loja.id}')" title="Apagar"><i class='bx bx-trash'></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += tr;
+            });
+        }
+
+        // NOVO: Controle específico do trial
+        window.alterarTrialStatus = async (id, acao) => {
+            if (acao === 'bloquear-trial') {
+                if(!confirm("🔒 BLOQUEAR TRIAL?\nO cliente não conseguirá mais usar o período gratuito.")) return;
+                await update(ref(db, `lojas/${id}/config`), { 
+                    trial_bloqueado: true,
+                    is_trial_active: false
+                });
+                alert("✅ Trial bloqueado com sucesso!");
+            } else {
+                if(!confirm("🔓 LIBERAR TRIAL?\nO cliente voltará a ter acesso ao período gratuito.")) return;
+                await update(ref(db, `lojas/${id}/config`), { 
+                    trial_bloqueado: false,
+                    is_trial_active: true
+                });
+                alert("✅ Trial liberado com sucesso!");
+            }
+            carregarLojas();
+        }
+
+        window.alterarStatus = async (id, acao) => {
+            if (acao === 'bloquear') {
+                if(!confirm("⚠️ BLOQUEAR LOJA?\nO cliente não conseguirá acessar o painel.")) return;
+                await update(ref(db, `lojas/${id}/config`), { status: 'pendente', bloqueio_manual: true });
+            } else {
+                if(!confirm("LIBERAR ACESSO?\nA loja voltará ao normal.")) return;
+                await update(ref(db, `lojas/${id}/config`), { status: 'ativo', bloqueio_manual: null });
+            }
+            carregarLojas();
+        }
+
+        window.filtrarStatus = (status, btn) => {
+            filtroAtual = status;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active', 'active-bloq', 'active-vencido');
+            });
+            btn.classList.add('active');
+            if(status === 'bloqueado') btn.classList.add('active-bloq');
+            if(status === 'vencido') btn.classList.add('active-vencido');
             renderizarTabela();
-        });
-    }
+        }
 
-    function renderizarTabela() {
-        const tbody = document.getElementById('listaLojas');
-        tbody.innerHTML = "";
-        
-        const termo = document.getElementById('searchInput').value.toLowerCase();
-        let listaFiltrada = lojasData.filter(loja => {
-            const matchTexto = loja.raw.includes(termo);
-            if (!matchTexto) return false;
+        window.filtrarTexto = () => renderizarTabela();
+
+        window.copiar = (txt) => {
+            navigator.clipboard.writeText(txt);
+            alert("✅ Copiado!");
+        }
+
+        window.copiarLink = (id) => {
+            const url = `${window.location.href.replace('master.html', '')}entrada.html?id=${id}`;
+            window.copiar(url);
+            alert("🔗 Link copiado!");
+        }
+
+        window.renovar = async (id, tipo) => {
+            const valor = tipo === 'premium' ? "R$ 79,90" : "R$ 59,90";
+            const nomePlano = tipo.toUpperCase();
             
-            if (filtroAtual === 'todos') return true;
-            if (filtroAtual === 'premium') return loja.plano === 'premium';
-            if (filtroAtual === 'ativo') return (loja.status === 'ativo' || loja.status === 'teste'); 
-            return loja.status === filtroAtual;
-        });
+            if(!confirm(`CONFIRMA RENOVAÇÃO / MUDANÇA?\n\nLoja: ${id}\nNovo Plano: ${nomePlano}\nValor: ${valor}\nAdicionar: +30 Dias`)) return;
 
-        listaFiltrada.sort((a, b) => {
-            const peso = { 'novo': 6, 'teste': 5, 'vencido': 4, 'bloqueado': 3, 'ativo': 1 };
-            if (peso[a.status] !== peso[b.status]) return peso[b.status] - peso[a.status];
-            return b.validade - a.validade;
-        });
+            const lojaRef = ref(db, `lojas/${id}/config`);
+            const snap = await get(lojaRef);
+            const data = snap.val();
 
-        if (listaFiltrada.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:30px'>Nenhum resultado.</td></tr>";
-            return;
+            let validadeAtual = new Date(data.validade || 0);
+            const hoje = new Date();
+            let baseData = (validadeAtual > hoje) ? validadeAtual : hoje;
+            baseData.setDate(baseData.getDate() + 30);
+
+            await update(lojaRef, {
+                status: 'ativo',
+                plano_escolhido: tipo,
+                validade: baseData.toISOString(),
+                bloqueio_manual: null,
+                is_trial_active: false, // Desativa trial ao renovar
+                trial_bloqueado: false
+            });
+            alert(`✅ Sucesso! Loja agora é ${nomePlano} e vence em ${baseData.toLocaleDateString('pt-BR')}`);
+            carregarLojas();
         }
 
-        listaFiltrada.forEach(loja => {
-            let badgeStatus = "";
-            let rowStyle = "";
-            let btnLock = "";
-            let btnKillTest = ""; 
-
-            // CORREÇÃO CRÍTICA AQUI:
-            // O botão de matar teste aparece se a flag isTeste for true, 
-            // INDEPENDENTE se o status visual é 'teste', 'ativo' ou 'vencido'.
-            // A única condição é não estar bloqueado manualmente ou vencido há muito tempo.
-            if (loja.isTeste) {
-                 btnKillTest = `<button class="btn-mini b-kill" onclick="encerrarTeste('${loja.id}')" title="ENCERRAR TESTE AGORA (Forçar Vencimento)"><i class='bx bx-stop-circle'></i> PARAR TESTE</button>`;
+        window.apagar = async (id) => {
+            if(prompt(`⚠️ Para DELETAR a loja ${id} digite CONFIRMAR:`) === "CONFIRMAR") {
+                await remove(ref(db, `lojas/${id}`));
+                alert("🗑️ Loja deletada!");
+                carregarLojas();
             }
-
-            if (loja.status === 'bloqueado') {
-                badgeStatus = `<span class="status-badge st-bloq"><i class='bx bxs-lock'></i> BLOQ. ADM</span>`;
-                rowStyle = "background: rgba(239, 68, 68, 0.05);";
-                btnLock = `<button class="btn-mini b-unlock" onclick="alterarStatus('${loja.id}', 'desbloquear')" title="DESBLOQUEAR"><i class='bx bxs-lock-open'></i></button>`;
-            } 
-            else if (loja.status === 'novo') {
-                badgeStatus = `<span class="status-badge st-novo"><i class='bx bxs-key'></i> AGUARDANDO</span>`;
-                rowStyle = "background: rgba(245, 158, 11, 0.05);";
-                btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
-            } 
-            else if (loja.status === 'teste') {
-                badgeStatus = `<span class="status-badge st-teste"><i class='bx bx-timer'></i> TESTE (${loja.diasRestantes}d)</span>`;
-                rowStyle = "background: rgba(59, 130, 246, 0.05); border-left: 3px solid #60a5fa;";
-                btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
-            }
-            else if (loja.status === 'vencido') {
-                badgeStatus = `<span class="status-badge st-vencido">VENCIDO (${Math.abs(loja.diasRestantes)}d)</span>`;
-                btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
-            } 
-            else {
-                badgeStatus = `<span class="status-badge st-ativo">ATIVO (${loja.diasRestantes}d)</span>`;
-                btnLock = `<button class="btn-mini b-lock" onclick="alterarStatus('${loja.id}', 'bloquear')" title="BLOQUEAR"><i class='bx bxs-lock'></i></button>`;
-            }
-
-            const badgePlano = loja.plano === 'premium' 
-                ? `<span class="plano-badge pl-premium">PREMIUM</span>` 
-                : `<span class="plano-badge pl-basico">BÁSICO</span>`;
-
-            const linkZap = `https://wa.me/${loja.zap}`;
-
-            const tr = `
-                <tr style="${rowStyle}">
-                    <td>
-                        <span class="loja-nome">${loja.nome}</span>
-                        <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">
-                            ${loja.id} <i class='bx bx-copy' style="cursor:pointer" onclick="copiar('${loja.id}')"></i>
-                        </div>
-                    </td>
-                    <td>${badgePlano}</td>
-                    <td>
-                        <div style="display:flex; flex-direction:column; gap:5px;">
-                            ${badgeStatus}
-                            ${loja.status === 'novo' ? `<div class="codigo-box" onclick="copiar('${loja.codigo}')" title="Copiar Chave">${loja.codigo}</div>` : ''}
-                        </div>
-                    </td>
-                    <td style="font-size:0.85rem; color:#ccc;">
-                        ${loja.validade.toLocaleDateString('pt-BR')}
-                    </td>
-                    <td><span class="status-badge" style="background:#334155"><i class='bx bx-show'></i> ${loja.visitas}</span></td>
-                    <td>
-                        <div class="actions">
-                            <button class="btn-mini btn-renovar btn-ren-bas" onclick="renovar('${loja.id}', 'basico')" title="Renovar Básico">BÁSICO</button>
-                            <button class="btn-mini btn-renovar btn-ren-pre" onclick="renovar('${loja.id}', 'premium')" title="Renovar Premium">PREMIUM</button>
-                            
-                            <div style="width:1px; background:#334155; margin:0 5px;"></div>
-
-                            ${btnKillTest} ${btnLock} 
-                            
-                            <button class="btn-mini b-zap" onclick="window.open('${linkZap}', '_blank')" title="WhatsApp"><i class='bx bxl-whatsapp'></i></button>
-                            <button class="btn-mini b-copy" onclick="copiarLink('${loja.id}')" title="Link Loja"><i class='bx bx-link'></i></button>
-                            <button class="btn-mini b-del" onclick="apagar('${loja.id}')" title="Apagar"><i class='bx bx-trash'></i></button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            tbody.innerHTML += tr;
-        });
-    }
-
-    // --- NOVA FUNÇÃO: MATAR TESTE ---
-    window.encerrarTeste = async (id) => {
-        if(!confirm(`⚠️ ENCERRAR PERÍODO DE TESTE?\n\nA loja ${id} ficará VENCIDA imediatamente e o cliente verá a tela de pagamento.`)) return;
-
-        const ontem = new Date();
-        ontem.setDate(ontem.getDate() - 1); 
-
-        // Atualiza validade para o passado (aciona o paywall no admin.html)
-        await update(ref(db, `lojas/${id}/config`), {
-            validade: ontem.toISOString() 
-        });
-        alert("Teste encerrado! O cliente agora vê a tela de pagamento.");
-    }
-
-    // --- AÇÕES PADRÃO ---
-    window.alterarStatus = async (id, acao) => {
-        if (acao === 'bloquear') {
-            if(!confirm("⚠️ BLOQUEAR ACESSO (ADMIN)?\nO cliente verá 'Acesso Bloqueado'.")) return;
-            await update(ref(db, `lojas/${id}/config`), { status: 'pendente', bloqueio_manual: true });
-        } else {
-            if(!confirm("LIBERAR ACESSO?\nA loja voltará ao normal.")) return;
-            await update(ref(db, `lojas/${id}/config`), { status: 'ativo', bloqueio_manual: null });
         }
-    }
-
-    window.filtrarStatus = (status, btn) => {
-        filtroAtual = status;
-        document.querySelectorAll('.filter-btn').forEach(b => {
-            b.classList.remove('active', 'active-bloq', 'active-vencido', 'active-teste');
-        });
-        btn.classList.add('active');
-        if(status === 'bloqueado') btn.classList.add('active-bloq');
-        if(status === 'vencido') btn.classList.add('active-vencido');
-        if(status === 'teste') btn.classList.add('active-teste');
-        renderizarTabela();
-    }
-
-    window.filtrarTexto = () => renderizarTabela();
-
-    window.copiar = (txt) => { navigator.clipboard.writeText(txt); }
-
-    window.copiarLink = (id) => {
-        const url = `${window.location.href.replace('master.html', '')}entrada.html?id=${id}`;
-        window.copiar(url);
-        alert("Link copiado!");
-    }
-
-    window.renovar = async (id, tipo) => {
-        const valor = tipo === 'premium' ? "R$ 79,90" : "R$ 59,90";
-        const nomePlano = tipo.toUpperCase();
-        
-        if(!confirm(`CONFIRMA EFETIVAÇÃO/PAGAMENTO?\n\nLoja: ${id}\nNovo Plano: ${nomePlano}\nValor: ${valor}\n\nIsso remove o modo 'Teste' e adiciona 30 dias.`)) return;
-
-        const lojaRef = ref(db, `lojas/${id}/config`);
-        const snap = await get(lojaRef);
-        const data = snap.val();
-
-        let validadeAtual = new Date(data.validade || 0);
-        const hoje = new Date();
-        let baseData = (validadeAtual > hoje) ? validadeAtual : hoje;
-        baseData.setDate(baseData.getDate() + 30);
-
-        await update(lojaRef, {
-            status: 'ativo',
-            em_teste: null, 
-            plano_escolhido: tipo, 
-            validade: baseData.toISOString(),
-            bloqueio_manual: null 
-        });
-        alert(`Sucesso! Loja agora contribui para a receita.`);
-    }
-
-    window.apagar = async (id) => {
-        if(prompt(`Para DELETAR a loja ${id} digite CONFIRMAR:`) === "CONFIRMAR") {
-            await remove(ref(db, `lojas/${id}`));
-        }
-    }
-</script>
+    </script>
 </body>
 </html>
