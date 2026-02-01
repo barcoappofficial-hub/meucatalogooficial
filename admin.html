@@ -75,6 +75,30 @@
         .copy-option.selected { border-color: var(--isca); background: rgba(250, 204, 21, 0.15); }
         .copy-label { font-size: 0.75rem; color: var(--isca); font-weight: 700; margin-bottom: 5px; display: block; }
         .copy-text { font-size: 0.85rem; color: white; line-height: 1.5; white-space: pre-line; }
+
+        /* MODAL DE UPGRADE (TRIAL EXPIRADO) */
+        .modal-upgrade { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .upgrade-box { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 35px; border-radius: 24px; width: 100%; max-width: 450px; text-align: center; border: 2px solid rgba(168, 85, 247, 0.3); box-shadow: 0 20px 60px rgba(168, 85, 247, 0.2); }
+        .upgrade-icon { font-size: 4rem; color: #a855f7; margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .upgrade-title { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .upgrade-subtitle { color: #94a3b8; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
+        .planos-upgrade { display: flex; gap: 15px; margin-bottom: 25px; }
+        .plano-upgrade-card { flex: 1; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; }
+        .plano-upgrade-card:hover { transform: translateY(-5px); }
+        .plano-upgrade-card.selected { border-color: #a855f7; background: rgba(168, 85, 247, 0.1); box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3); }
+        .plano-nome-up { font-size: 0.75rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; }
+        .plano-preco-up { font-size: 2rem; font-weight: 800; color: white; margin-bottom: 5px; }
+        .plano-detalhe-up { font-size: 0.8rem; color: #cbd5e1; }
+        .badge-popular { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #a855f7, #ec4899); color: white; font-size: 0.65rem; font-weight: bold; padding: 3px 10px; border-radius: 12px; white-space: nowrap; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.5); }
+        .beneficios-list { text-align: left; margin-bottom: 25px; }
+        .beneficio-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.85rem; color: #cbd5e1; }
+        .beneficio-item i { color: #10b981; font-size: 1.2rem; }
+        .btn-upgrade { width: 100%; padding: 18px; background: linear-gradient(135deg, #a855f7, #ec4899); color: white; border: none; font-size: 1.1rem; font-weight: 800; border-radius: 12px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-upgrade:active { transform: scale(0.98); }
+        .trial-warning { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .trial-warning i { color: #f87171; font-size: 1.5rem; }
+        .trial-warning-text { text-align: left; flex: 1; font-size: 0.85rem; color: #fca5a5; }
     </style>
 </head>
 <body>
@@ -138,6 +162,65 @@
                 <i class='bx bxl-whatsapp'></i> Enviar no WhatsApp
             </button>
             <button onclick="voltarIsca()" class="btn btn-outline" style="border-color: #64748b; color: #cbd5e1;">Fazer Outra</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE UPGRADE (TRIAL EXPIRADO) -->
+    <div id="modalUpgrade" class="modal-upgrade">
+        <div class="upgrade-box">
+            <i class='bx bxs-rocket upgrade-icon'></i>
+            <h2 class="upgrade-title">Sua jornada está apenas começando! 🚀</h2>
+            <p class="upgrade-subtitle">
+                Seu período de teste chegou ao fim, mas o seu crescimento não pode parar. 
+                Libere agora todas as ferramentas exclusivas e leve sua gestão para o próximo nível!
+            </p>
+
+            <div class="trial-warning">
+                <i class='bx bxs-error-circle'></i>
+                <div class="trial-warning-text">
+                    <strong>Período gratuito encerrado</strong><br>
+                    Escolha um plano para continuar vendendo
+                </div>
+            </div>
+
+            <div class="planos-upgrade">
+                <div class="plano-upgrade-card" onclick="selecionarPlanoUpgrade('basico', 59.90)" id="card-upgrade-basico">
+                    <div class="plano-nome-up">Básico</div>
+                    <div class="plano-preco-up">R$ 59,90</div>
+                    <div class="plano-detalhe-up">Até 80 Produtos</div>
+                </div>
+
+                <div class="plano-upgrade-card selected" onclick="selecionarPlanoUpgrade('premium', 79.90)" id="card-upgrade-premium">
+                    <div class="badge-popular">MAIS ESCOLHIDO</div>
+                    <div class="plano-nome-up">Premium</div>
+                    <div class="plano-preco-up">R$ 79,90</div>
+                    <div class="plano-detalhe-up">Até 150 Produtos</div>
+                </div>
+            </div>
+
+            <div class="beneficios-list">
+                <div class="beneficio-item">
+                    <i class='bx bxs-check-circle'></i>
+                    <span>Sistema profissional de vendas</span>
+                </div>
+                <div class="beneficio-item">
+                    <i class='bx bxs-check-circle'></i>
+                    <span>Vitrine personalizada para clientes</span>
+                </div>
+                <div class="beneficio-item">
+                    <i class='bx bxs-check-circle'></i>
+                    <span>Pedidos automáticos via WhatsApp</span>
+                </div>
+                <div class="beneficio-item">
+                    <i class='bx bxs-check-circle'></i>
+                    <span>Campanhas promocionais e iscas</span>
+                </div>
+            </div>
+
+            <button onclick="contratarPlanoEscolhido()" class="btn-upgrade" id="btnUpgradeModal">
+                <i class='bx bxl-whatsapp'></i>
+                <span>CONTRATAR AGORA</span>
+            </button>
         </div>
     </div>
 
@@ -272,7 +355,7 @@
                 <i class='bx bx-copy'></i> Copiar Link
             </button>
         </div>
-        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 13.5 - Paywall Ativo</div>
+        <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 30px;">Versão 13.5 - Novos Cards Pro</div>
     </div>
 
     <nav class="bottom-nav">
@@ -294,6 +377,12 @@
     let TIPO_NEGOCIO = "varejo"; // Variavel nova para o gatilho
     let PRODUTO_ISCA_SELECIONADO = null;
     let TEXTO_COPY_SELECIONADO = 0;
+    
+    // VARIÁVEIS DE CONTROLE DE TRIAL/UPGRADE
+    let PLANO_UPGRADE_SELECIONADO = 'premium';
+    let PRECO_UPGRADE_SELECIONADO = 79.90;
+    let IS_TRIAL_EXPIRED = false;
+    let TRIAL_BLOQUEADO = false;
     
     window.PRODUTOS_CACHE = {};
 
@@ -322,6 +411,54 @@
 
     function showToast(msg) { const t = document.getElementById('toast'); t.innerHTML = `<i class='bx bx-check-circle'></i> <span>${msg}</span>`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
     window.sair = () => { if(confirm("Deseja sair?")) { localStorage.removeItem('minha_loja_id'); window.location.href = "index.html"; } }
+
+    // FUNÇÕES DE UPGRADE
+    window.selecionarPlanoUpgrade = (plano, preco) => {
+        PLANO_UPGRADE_SELECIONADO = plano;
+        PRECO_UPGRADE_SELECIONADO = preco;
+        document.querySelectorAll('.plano-upgrade-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById(`card-upgrade-${plano}`).classList.add('selected');
+    }
+
+    window.contratarPlanoEscolhido = () => {
+        const nomePlano = PLANO_UPGRADE_SELECIONADO.toUpperCase();
+        const valor = `R$ ${PRECO_UPGRADE_SELECIONADO.toFixed(2).replace('.', ',')}`;
+        const seuNumero = "5597984431811"; 
+        const msg = `Olá! Quero RENOVAR a loja *${LOJA_NOME_GLOBAL}* para o plano *${nomePlano}* (${valor}). Aguardo contato para ativação!`;
+        window.open(`https://wa.me/${seuNumero}?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function verificarStatusTrial(config) {
+        const plano = config.plano_escolhido || 'inicio';
+        PLANO_ATUAL = plano;
+
+        // Se não for trial, não precisa verificar nada
+        if(plano !== 'inicio') {
+            return;
+        }
+
+        // Verifica se o trial foi bloqueado pelo admin
+        if(config.trial_bloqueado === true) {
+            TRIAL_BLOQUEADO = true;
+            mostrarModalUpgrade();
+            return;
+        }
+
+        // Verifica se o trial expirou
+        const validade = new Date(config.validade);
+        const hoje = new Date();
+        const diasRestantes = Math.ceil((validade - hoje) / (1000 * 60 * 60 * 24));
+
+        if(diasRestantes < 0) {
+            IS_TRIAL_EXPIRED = true;
+            mostrarModalUpgrade();
+        }
+    }
+
+    function mostrarModalUpgrade() {
+        document.getElementById('modalUpgrade').style.display = 'flex';
+    }
+
 
     window.preview = (input, imgId) => {
         if(input.files && input.files[0]) {
@@ -441,66 +578,14 @@
             return; 
         }
 
-        // ====================================================
-        // 🔥 LÓGICA DE BLOQUEIO POR VENCIMENTO (PAYWALL)
-        // ====================================================
-        const dataValidade = data.validade ? new Date(data.validade) : new Date();
-        if (new Date() > dataValidade) {
-            document.body.innerHTML = `
-                <div style="min-height:100vh; background:linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; padding:25px; font-family:'Inter', sans-serif; text-align:center;">
-                    
-                    <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                        <i class='bx bx-time-five' style="font-size:4rem; color:#facc15; margin-bottom:10px;"></i>
-                        <h1 style="margin: 0; font-size: 1.5rem; background: linear-gradient(to right, #facc15, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Período Gratuito Encerrado</h1>
-                        <p style="color:#94a3b8; font-size: 0.9rem; margin: 15px 0 25px 0; line-height: 1.5;">
-                            Sua loja foi um sucesso! Para continuar vendendo e não perder seus dados, escolha um plano abaixo.
-                        </p>
-
-                        <div onclick="contratarPlano('basico')" style="background: rgba(255,255,255,0.03); border: 1px solid #334155; padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="text-align: left;">
-                                <strong style="color:white; display:block;">Plano Mensal</strong>
-                                <span style="font-size: 0.75rem; color: #94a3b8;">Até 80 produtos</span>
-                            </div>
-                            <div style="font-weight: bold; color: #60a5fa;">R$ 59,90</div>
-                        </div>
-
-                        <div onclick="contratarPlano('premium')" style="background: rgba(59, 130, 246, 0.15); border: 1px solid #3b82f6; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; position: relative;">
-                            <div style="position: absolute; top: -10px; right: 10px; background: #3b82f6; color: white; font-size: 0.6rem; padding: 2px 8px; border-radius: 10px; font-weight: bold;">MAIS VENDIDO</div>
-                            <div style="text-align: left;">
-                                <strong style="color:white; display:block;">Plano Premium</strong>
-                                <span style="font-size: 0.75rem; color: #94a3b8;">Até 150 produtos + Vendas</span>
-                            </div>
-                            <div style="font-weight: bold; color: #3b82f6;">R$ 79,90</div>
-                        </div>
-
-                        <p style="font-size: 0.7rem; color: #475569; margin-top: 20px;">
-                            Ao clicar, você será redirecionado para o WhatsApp do suporte para ativar.
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            // FUNÇÃO DE ENVIO PARA O WHATSAPP
-            window.contratarPlano = (tipo) => {
-                const numero = "5597984431811";
-                const nomeLoja = data.nome || "Minha Loja";
-                let msg = "";
-                
-                if(tipo === 'basico') {
-                     msg = `Olá! O período gratuito da loja *${nomeLoja}* encerrou. Quero continuar com o *PLANO MENSAL* (R$ 59,90) para não perder meus dados.`;
-                } else {
-                     msg = `Olá! O período gratuito da loja *${nomeLoja}* encerrou. Quero fazer o upgrade para o *PLANO PREMIUM* (R$ 79,90) e ter todos os benefícios!`;
-                }
-                
-                window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
-            }
-            return; // TRAVA A EXECUÇÃO DO RESTO DO SCRIPT
-        }
-        // ====================================================
+        if(new Date() > (data.validade ? new Date(data.validade) : new Date())) { document.body.innerHTML = "<h1 style='color:white;text-align:center;padding:50px'>SEU PLANO VENCEU<br><br>Entre em contato para renovar.</h1>"; return; }
 
         PLANO_ATUAL = data.plano_escolhido || "basico";
         LOJA_NOME_GLOBAL = data.nome || "Minha Loja";
         CIDADE_GLOBAL = data.cidade || "";
+        
+        // VERIFICAR STATUS DO TRIAL
+        verificarStatusTrial(data);
         
         // APLICAR GATILHO DO CARDAPIO
         const tipoSalvo = data.tipo_negocio || "varejo";
@@ -641,7 +726,7 @@
     window.deletar = async (id) => { if(confirm("Apagar?")) await remove(ref(db, `lojas/${LOJA_ID}/produtos/${id}`)); }
 
     // ==========================================
-    // 🎨 MÁQUINA DE MARKETING
+    // 🎨 MÁQUINA DE MARKETING (NOVO DESIGN TECH)
     // ==========================================
     
     // --- FUNÇÃO PARA QUEBRAR TEXTO AUTOMATICAMENTE (WRAP) ---
